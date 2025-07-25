@@ -1,0 +1,43 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table users {
+    id serial [pk]
+    username text [not null, unique]
+    hashed_pwd text [not null]
+}
+
+Table targets {
+    id serial [pk]
+    user_id integer [not null]
+    calorie_target integer
+    protein_target integer
+    fat_target integer
+    carb_target integer
+}
+
+Table nutrition {
+    id serial [pk]
+    user_id integer [not null]
+    meal_id integer
+    entered_at timestamp [not null]
+    calories integer [not null]
+    protein integer
+    fat integer
+    carbs integer
+}
+
+
+Table meals {
+    id serial [pk]
+    name text [not null]
+}
+
+
+
+Ref: users.id < targets.user_id
+
+Ref: users.id < nutrition.user_id
+
+Ref: meals.id < nutrition.meal_id

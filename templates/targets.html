@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2>Targets</h2>
+    <a href="{{ url_for('edit_targets', username=username) }}"><button type="button">Edit targets</button></a>
+    <table>
+        <tr>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+        </tr>
+        <tr>
+            <td>{{ user_targets.calorie_target }}</td>
+            <td>{{ user_targets.protein_target }}</td>
+            <td>{{ user_targets.fat_target }}</td>
+            <td>{{ user_targets.carb_target }}</td>
+        </tr>
+    </table>
+    <p><a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a></p>
+{% endblock %}

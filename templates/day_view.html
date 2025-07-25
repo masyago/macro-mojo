@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2>Displaying all data for {{ date }}</h2>
+    <p></p>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+    
+    <h3>Summary</h3>
+    <table>
+        <tr>
+            <th>Status</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+        </tr>
+        <tr>
+            <td>Ate</td>
+            <td>{{ daily_total.calories }}</td>
+            <td>{{ daily_total.protein }}</td>
+            <td>{{ daily_total.fat }}</td>
+            <td>{{ daily_total.carbs }}</td>
+        </tr>
+        <tr>
+            <td>Left</td>
+            <td>{{ nutrition_left["Calories left"] }}</td>
+            <td>{{ nutrition_left["Protein left"] }}</td>
+            <td>{{ nutrition_left["Fat left"] }}</td>
+            <td>{{ nutrition_left["Carbs left"] }}</td>
+        </tr>
+    </table>
+    <p></p>
+    <div>
+        <h3>All meals of the day</h3>
+        <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}"><button type="button" class="add-meal-button">Add new entry</button></a> 
+    </div>
+    <p> Click on a timestamp to edit or delete a row</p>
+    <table>
+        <tr>
+            <th>Added at</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+            <th>Meal</th>
+        </tr>
+        {% for nutrition_row in daily_nutrition_entries_on_page %}
+            <tr>
+                <td><a href="{{ url_for('edit_entry', username=username, date=date, nutrition_entry_id=nutrition_row.nutrition_entry_id ) }}">{{ nutrition_row["Added at"] }}</a></td>
+                <td>{{ nutrition_row["Calories"] }}</td>
+                <td>{{ nutrition_row["Protein"] }}</td>
+                <td>{{ nutrition_row["Fat"] }}</td>
+                <td>{{ nutrition_row["Carbohydrates"] }}</td>
+                <td>{{ nutrition_row["Meals or snacks"] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('day_view', username=username, date=date, page=page-1) }}">Previous</a>
+        {% endif %}
+        
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('day_view', username=username, date=date, page=page+1) }}">Next</a>
+        {% endif %}
+    </div>
+{% endblock %}

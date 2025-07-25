@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h3>Editing entry from {{ nutrition_data.entered_at }}:</h3>
+    <form action="{{ url_for('update_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
+        <table class="new-entry">
+            <tr>
+                <td>
+                    <label for="calories">
+                        Calories
+                    </label>
+                </td>
+                <td><input type="number" name="calories" value="{{ nutrition_data.calories }}" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="protein">
+                        Protein
+                    </label>
+                </td>
+                <td><input type="number" name="protein" value="{{ nutrition_data.protein }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="fat">
+                        Fat
+                    </label>
+                </td>
+                <td><input type="number" name="fat" value="{{ nutrition_data.fat }}" />
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                    <label for="carbs">
+                        Carbohydrates
+                    </label>
+                </td>
+                <td><input type="number" name="carbs" value="{{ nutrition_data.carbs }}" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="meal">
+                        Meal or snack
+                    </label>
+                </td>
+                <td>
+                    <select type="text" name="meal" value="{{ nutrition_data.meal_id }}">
+                        {% for meal in meal_options %} 
+                            <option>{{ meal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                
+            </tr>
+            <tr>
+                <td class="submit-edits-button">
+                    <button type="submit">Submit</button>
+            </tr>
+        </table>
+    </form>
+    <form action="{{ url_for('delete_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
+        <button type="submit" class="delete">Delete entry</button>
+    </form>
+    <p></p>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+
+
+
+{% endblock %}

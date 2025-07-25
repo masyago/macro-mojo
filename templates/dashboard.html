@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <form action="{{ url_for('logout') }}" method="post">
+        <div class="logout-button">
+            <button type="submit">Log Out</button>
+        </div>
+    </form>
+
+    <div class="dashboard-header">
+        <h2>Welcome, {{ username }}!</h2>
+        <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}"><button type="button" class="add-meal-button">Add new entry</button></a> 
+    </div>
+    
+    <div class="dashboard-targets">
+        <h3>Targets</h3>
+        <a href="{{ url_for('edit_targets', username=username) }}"><button type="button" class="edit-targets-button">Edit targets</button></a>
+    </div>
+    <table>
+        <tr>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+        </tr>
+        <tr>
+            <td>{{ user_targets.calorie_target }}</td>
+            <td>{{ user_targets.protein_target }}</td>
+            <td>{{ user_targets.fat_target }}</td>
+            <td>{{ user_targets.carb_target }}</td>
+        </tr>
+    </table>
+    <h3>Nutrition per day</h3>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+        </tr>
+        {% for nutrition_row in user_nutrition_on_page %}
+            <tr>
+                <td><a href="{{ url_for('day_view', username=username, date=nutrition_row.date ) }}">{{ nutrition_row.date }}</a></td>
+                <td>{{ nutrition_row.calories }}</td>
+                <td>{{ nutrition_row.protein }}</td>
+                <td>{{ nutrition_row.fat }}</td>
+                <td>{{ nutrition_row.carbs }}</td>
+            </tr>
+         {% endfor %}
+    </table>
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('user_overview', username=username, page=page-1) }}">Previous</a>
+        {% endif %}
+
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('user_overview', username=username, page=page+1) }}">Next</a>
+        {% endif %}
+    </div>
+    <div>
+        <h4>Customize available meals and snacks</h4>
+        <a href="{{ url_for('display_meals', username=username) }}"><button type="button" class="edit-meals-button">Edit meals</button></a>
+    </div>
+
+{% endblock %}

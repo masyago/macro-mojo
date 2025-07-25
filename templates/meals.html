@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2>Meals and snacks</h2>
+    <div class="warning-text">
+        <p>Warning! Deleting meals will lead to deletion of any entries that include those meals. 
+            Editing meals will update existing entries. The actions cannot be undone.</p>
+    </div>
+    <div class="recommended-text">
+        <p>Recommended: Add new meals instead of editing or deleting existing meals.</p>
+        <a href="{{ url_for('new_meal', username=username) }}"><button type="button" class="add-new-meal-button">Add new meal</button></a> 
+    </div>
+    <div>Click on a meal to edit or delete</div>
+    <table class="meals-table">
+        {% for meal in user_meals_on_page %}
+        <tr>
+            <td><a href="{{ url_for('edit_meal', username=username, meal_id=meal.id ) }}">
+                {{ meal.name }}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('display_meals', username=username, page=page-1) }}">Previous</a>
+        {% endif %}
+        
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('display_meals', username=username, page=page+1) }}">Next</a>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+{% endblock %}
+

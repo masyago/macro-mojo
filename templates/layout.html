@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>Calorie Tracker</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/application.css') }}">
+    </head>
+    <body>
+        {% for message in get_flashed_messages() %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+        <main>
+            {% block content %}
+            {% endblock%}
+        </main>
+    </body>
+</html>

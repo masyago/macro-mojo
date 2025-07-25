@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h3>Adding new entry for {{ date }}:</h3>
+    <form action="{{ url_for('add_nutrition_entry', username=username, date=date) }}" method="post">
+        <table class="new-entry">
+            <tr>
+                <td>
+                    <label for="calories">
+                        Calories
+                    </label>
+                </td>
+                <td><input type="number" name="calories" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="protein">
+                        Protein
+                    </label>
+                </td>
+                <td><input type="number" name="protein" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="fat">
+                        Fat
+                    </label>
+                </td>
+                <td><input type="number" name="fat" />
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                    <label for="carbs">
+                        Carbohydrates
+                    </label>
+                </td>
+                <td><input type="number" name="carbs" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="meal">
+                        Meal or snack
+                    </label>
+                </td>
+                
+                <td>
+                    <select type="text" name="meal">
+                        <option value="">Select an option</option>
+                        {% for meal in meal_options %}
+                            <option>{{ meal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                
+            </tr>
+            <tr>
+                <td class="submit-edits-button">
+                    <button type="submit">Submit</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <p></p>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+
+
+
+{% endblock %}
