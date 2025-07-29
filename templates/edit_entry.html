@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h3>Editing entry from {{ nutrition_data.entered_at }}:</h3>
+    <h3>Editing entry from {{ date }}:</h3>
     <form action="{{ url_for('update_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
         <table class="new-entry">
             <tr>
@@ -47,13 +47,13 @@
                     </label>
                 </td>
                 <td>
-                    <select type="text" name="meal" value="{{ nutrition_data.meal_id }}">
-                        {% for meal in meal_options %} 
-                            <option>{{ meal.name }}</option>
+                    <select type="text" name="meal" required>
+                        <option value="">Select one</option>
+                        {% for meal in user_meals %} 
+                            <option value="{{ meal.name }}" {% if nutrition_data.get('meal') == meal.name %}selected{% endif %}>{{ meal.name }}</option>
                         {% endfor %}
                     </select>
                 </td>
-                
             </tr>
             <tr>
                 <td class="submit-edits-button">

@@ -30,7 +30,10 @@ CREATE TABLE nutrition (
 
 CREATE TABLE meals (
     id serial PRIMARY KEY,
-    name text UNIQUE NOT NULL
+    name text UNIQUE NOT NULL,
+    user_id integer REFERENCES (users.id)
+                    ON DELETE CASCADE,
+    UNIQUE(name, user_id)
 );
 
 

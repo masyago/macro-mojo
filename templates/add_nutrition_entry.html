@@ -10,7 +10,7 @@
                         Calories
                     </label>
                 </td>
-                <td><input type="number" name="calories" />
+                <td><input type="number" name="calories" value="{{ input_nutrition.calories | default('') }}" required/>
                 </td>
             </tr>
             <tr>
@@ -19,7 +19,7 @@
                         Protein
                     </label>
                 </td>
-                <td><input type="number" name="protein" />
+                <td><input type="number" name="protein" value="{{ input_nutrition.protein | default('') }}" required/>
                 </td>
             </tr>
             <tr>
@@ -28,7 +28,7 @@
                         Fat
                     </label>
                 </td>
-                <td><input type="number" name="fat" />
+                <td><input type="number" name="fat" value="{{ input_nutrition.fat | default('') }}" required/>
                 </td>
             </tr>
                     <tr>
@@ -37,7 +37,7 @@
                         Carbohydrates
                     </label>
                 </td>
-                <td><input type="number" name="carbs" />
+                <td><input type="number" name="carbs" value="{{ input_nutrition.carbs | default('') }}" required/>
                 </td>
             </tr>
             <tr>
@@ -46,12 +46,14 @@
                         Meal or snack
                     </label>
                 </td>
-                
                 <td>
-                    <select type="text" name="meal">
-                        <option value="">Select an option</option>
-                        {% for meal in meal_options %}
-                            <option>{{ meal.name }}</option>
+                    <select type="text" name="meal" required>
+                        <option value="">Select one</option>
+                        {% for meal in user_meals %}
+                            <option value="{{ meal.name }}"
+                            {% if input_nutrition.get('meal') == meal.name %}selected{% endif %}>
+                            {{ meal.name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>

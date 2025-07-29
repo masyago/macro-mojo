@@ -40,3 +40,5 @@
     "Protein": null
   }
 ]
+
+http://localhost:5003/test_user/meals

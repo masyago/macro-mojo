@@ -23,16 +23,18 @@ class DatabasePersistence:
 
     def find_login(self, username, password):
         query = "SELECT * FROM users WHERE username = %s"
-        logger.info("Executing query: %s", query)
+        logger.info("Executing query: %s with username %s", query, username)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (username, ))
-                user = cursor.fetchone()
-        stored_password = user['hashed_pwd'].encode('utf-8')
-        is_password_valid = bcrypt.checkpw(password.encode('utf-8'), stored_password)
+                user_row = cursor.fetchone()
 
-        if user and is_password_valid:
-            return True
+        if user_row:
+            stored_password = user_row['hashed_pwd'].encode('utf-8')
+            is_password_valid = bcrypt.checkpw(password.encode('utf-8'), stored_password)
+
+            if is_password_valid:
+                return True
         return False
     
     def _find_user_id_by_username(self, username):
@@ -64,7 +66,6 @@ class DatabasePersistence:
         
     def get_nutrition_left(self, username, date):
         user_id = self._find_user_id_by_username(username)
-
         query = """
                 SELECT (calorie_target - SUM(calories)) AS "Calories left",
                        (protein_target - SUM(protein)) AS "Protein left",
@@ -74,7 +75,7 @@ class DatabasePersistence:
                 LEFT OUTER JOIN targets ON target_id = targets.id
                 LEFT OUTER JOIN nutrition ON nutrition.user_id = users.id
                 WHERE user_id = %s AND date = %s
-                GROUP BY targets.id
+                GROUP BY targets.id 
                 """
         logger.info("Executing query: %s with user_id %s and date %s", query, user_id, date)
         with self._database_connect() as connection:
@@ -85,7 +86,7 @@ class DatabasePersistence:
     
     def get_daily_nutrition(self, username, date):
         user_id = self._find_user_id_by_username(username)
-
+        # Get all nutrition data, including meals, for specific date
         query = """
                 SELECT nutrition.id AS "nutrition_entry_id",
                        TO_CHAR(entered_at, 'YYYY-MM-DD HH24:MI') AS "Added at",
@@ -94,28 +95,27 @@ class DatabasePersistence:
                         fat AS "Fat",
                         carbs AS "Carbohydrates",
                         meals.name AS "Meals or snacks"
-                FROM users 
-                INNER JOIN nutrition ON users.id = nutrition.user_id
-                LEFT OUTER JOIN meals ON nutrition.meal_id = meals.id
-                WHERE "date" = %s
+                FROM nutrition  
+                INNER JOIN meals ON nutrition.meal_id = meals.id
+                WHERE nutrition.user_id = %s AND "date" = %s
                 ORDER BY entered_at DESC
                 """
-        
-        logger.info("Executing query: %s with date %s", query, date)
+    
+        logger.info("Executing query: %s with user_id %s and date %s", query, user_id, date)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (date, ))
+                cursor.execute(query, (user_id, date))
                 results = cursor.fetchall()
         
         daily_nutrition = [dict(result) for result in results]
         return daily_nutrition
-
     
     def get_user_targets(self, username):
         user_id = self._find_user_id_by_username(username)
-        query = """SELECT * FROM targets
-                INNER JOIN users ON target_id = targets.id
-                WHERE users.id = %s"""
+        query = """SELECT calorie_target, protein_target, fat_target, carb_target
+                   FROM targets
+                   INNER JOIN users ON target_id = targets.id
+                   WHERE users.id = %s"""
         logger.info("Executing query: %s with user_id %s", query, user_id)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
@@ -178,15 +178,6 @@ class DatabasePersistence:
     def add_nutrition_entry(self, date, username,
                             calories, protein, fat, carbs, meal):
         user_id = self._find_user_id_by_username(username)
-        query_meal = """
-            INSERT INTO meals (name)
-                        VALUES (%s)
-            """
-        logger.info("Executing query: %s with meal %s", query_meal, meal)
-        with self._database_connect() as connection:
-            with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query_meal, (meal, ))
-        
         query_meal_id = """
             SELECT id FROM meals
             WHERE name = %s
@@ -212,20 +203,6 @@ class DatabasePersistence:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query_add_nutrition, (user_id, meal_id,
                         date, calories, protein, fat, carbs))
-                    
-    def get_meal_options(self):
-        query = """
-                SELECT * FROM meals
-                ORDER BY name
-                """
-        logger.info("Executing query: %s", query)
-        with self._database_connect() as connection:
-            with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query)
-                results = cursor.fetchall()
-        
-        meal_options = [dict(result) for result in results]
-        return meal_options
 
     def find_nutrition_entry_by_id(self, username, nutrition_entry_id): # we can add user_id or username (with JOIN) 
         query = """
@@ -260,7 +237,6 @@ class DatabasePersistence:
         with self._database_connect() as connection:
                 with connection.cursor(cursor_factory=DictCursor) as cursor:
                     cursor.execute(query, (calories, protein, fat, carbs, meal_id, nutrition_entry_id))
-
             
     def find_meal_id(self, meal):
         query = """
@@ -285,7 +261,6 @@ class DatabasePersistence:
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (nutrition_entry_id, ))
-    
 
     def get_user_meals(self, username):
         user_id = self._find_user_id_by_username(username)
@@ -303,16 +278,17 @@ class DatabasePersistence:
         user_meals = [dict(result) for result in results]
         return user_meals
         
-    def update_meal(self, meal_id, new_meal):
+    def update_meal(self, username, meal_id, new_meal):
+        user_id = self._find_user_id_by_username(username)
         query = '''
                 UPDATE meals
                 SET name = %s
-                WHERE id = %s
+                WHERE id = %s AND user_id = %s
                 '''
-        logger.info("Executing query: %s with name %s and id %s", query, new_meal, meal_id)
+        logger.info("Executing query: %s with name %s and id %s", query, new_meal, meal_id, user_id)
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, (new_meal, meal_id))
+                cursor.execute(query, (new_meal, meal_id, user_id))
 
     def get_meal_data_by_id(self, meal_id):
         query = '''
@@ -347,28 +323,43 @@ class DatabasePersistence:
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (new_meal, user_id))
-    
 
-'''
+    def get_all_meal_names_except_current(self, username, meal_id):
+        user_id = self._find_user_id_by_username(username)
+        query = '''
+                SELECT name FROM meals
+                WHERE user_id = %s AND id != %s
+                '''
+        logger.info("Executing query: %s with user_id %s and id %s", query, user_id, meal_id)
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id, meal_id))
+                results = cursor.fetchall()
+        
+        meal_names_no_current = [dict(result) for result in results]
+        return meal_names_no_current
+     
+    def get_all_meal_names(self, username):
+        user_id = self._find_user_id_by_username(username)
+        query = '''
+                SELECT name FROM meals
+                WHERE user_id = %s
+                '''
+        logger.info("Executing query: %s with user_id %s and id %s", query, user_id)
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id, ))
+                results = cursor.fetchall()
+        
+        meal_names = [dict(result) for result in results]
+        return meal_names
 
-CREATE TABLE meals (
-    id serial PRIMARY KEY,
-    name text NOT NULL
-);
-    user_id integer NOT NULL REFERENCES users(id)
-                              ON DELETE CASCADE,
-    meal_id integer REFERENCES meals(id)
-                    ON DELETE CASCADE,
-    "date" date NOT NULL DEFAULT NOW(),
-    entered_at timestamp NOT NULL DEFAULT NOW(),
-    calories integer NOT NULL,
-    protein integer,
-    fat integer,
-    carbs integer'''
 
-db_p = DatabasePersistence()
-
-# print(db_p.find_login('test_user', 'test_pwd'))
+# db_p = DatabasePersistence()
+# # print(db_p.get_user_targets('test_user'))
+# # print(db_p.get_daily_nutrition('test_user', '2025-07-28'))
+# print(type(db_p._find_user_id_by_username('test_user')))
+# # print(db_p.find_login('test_user', 'test_pwd'))
 # print(db_p.get_user_all_nutrition('test_user'))
 
-print(db_p.find_meal_id('latte'))
+# print(db_p.find_meal_id('latte'))
