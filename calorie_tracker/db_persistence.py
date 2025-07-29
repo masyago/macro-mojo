@@ -44,6 +44,9 @@ class DatabasePersistence:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (username, ))
                 user_row = cursor.fetchone()
+
+        if not user_row: # test these two lines
+            return None
         user_id = user_row['id']
         return user_id
     
@@ -345,7 +348,7 @@ class DatabasePersistence:
                 SELECT name FROM meals
                 WHERE user_id = %s
                 '''
-        logger.info("Executing query: %s with user_id %s and id %s", query, user_id)
+        logger.info("Executing query: %s with user_id %s", query, user_id)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id, ))
@@ -353,9 +356,47 @@ class DatabasePersistence:
         
         meal_names = [dict(result) for result in results]
         return meal_names
+    
+    def get_all_meal_ids(self, username):
+        user_id = self._find_user_id_by_username(username)
+        query = '''
+                SELECT id FROM meals
+                WHERE user_id = %s
+                '''
+        logger.info("Executing query: %s with user_id %s", query, user_id)
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id, ))
+                results = cursor.fetchall()
+        
+        meals_results = [dict(result) for result in results]
+        all_meal_ids = []
+        for item in meals_results:
+            all_meal_ids.append(item['id'])
+        return all_meal_ids
+    
+    def get_all_nutrition_entries_ids(self, username):
+        user_id = self._find_user_id_by_username(username)
+        query = '''
+                SELECT id FROM nutrition
+                WHERE user_id = %s
+                '''
+        logger.info("Executing query: %s with user_id %s", query, user_id)
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id, ))
+                results = cursor.fetchall()
+        
+        nutrition_results = [dict(result) for result in results]
+        all_nutrition_ids = []
+        for item in nutrition_results:
+            all_nutrition_ids.append(item['id'])
+        return all_nutrition_ids
 
+db_p = DatabasePersistence()
+# print(db_p.get_all_meal_ids('test_user'))
+print(db_p.get_all_nutrition_entries_ids('test_user'))
 
-# db_p = DatabasePersistence()
 # # print(db_p.get_user_targets('test_user'))
 # # print(db_p.get_daily_nutrition('test_user', '2025-07-28'))
 # print(type(db_p._find_user_id_by_username('test_user')))

@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 def error_for_nutrition_entry(calories, protein, fat, carbs):
     inputs = [calories, protein, fat, carbs]
     
@@ -41,3 +43,20 @@ def check_meal_duplicates(new_meal, existing_meals):
         if new_meal == meal:
             return "Entered meal name already exists. Try another one!"
     return None
+
+def is_date_valid(d):
+    try: 
+        datetime.strptime(d, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+    
+def is_meal_id_valid(id, available_meal_id):
+    if id in available_meal_id:
+        return True
+    return False
+
+def is_nutrition_id_valid(id, available_nutrition_id):
+    if id in available_nutrition_id:
+        return True
+    return False

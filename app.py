@@ -1,6 +1,6 @@
 import secrets
 
-from datetime import date
+from datetime import date, datetime
 from flask import (
     flash,
     Flask,
@@ -18,13 +18,21 @@ from calorie_tracker.utils import (
     error_for_nutrition_entry,
     error_for_targets,
     error_for_meal_len,
+    is_date_valid,
+    is_meal_id_valid,
+    is_nutrition_id_valid,
 )
 
-
+from werkzeug.exceptions import NotFound
 from calorie_tracker.db_persistence import DatabasePersistence
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+
+@app.errorhandler(NotFound)
+def page_not_found(e):
+    return "MORE COFFEE!", 404
+    # return render_template('bad_url.html'), 404
 
 def user_logged_in():
     return 'username' in session
@@ -34,7 +42,7 @@ def check_login(func):
     def decorated_function(*args, **kwargs):
         if not user_logged_in():
             flash('You must be logged in to complete the action.')
-            return redirect(url_for('dispay_login_page'))
+            return redirect(url_for('dispay_login_page', next=request.url))
         
         return func(*args, **kwargs)
         
@@ -68,19 +76,25 @@ def load_db():
 def index():
     return render_template('index.html')
 
-@app.route("/login")
+@app.route("/login/")
 def dispay_login_page():
     return render_template('login.html')
 
-@app.route("/login", methods=["POST"])
+@app.route("/login/", methods=["POST"])
 def process_login():
     username = request.form["username"]
     password = request.form["pwd"]
+    next_url = request.form["next"]
 
     if g.storage.find_login(username, password):
         session['username'] = username
         session.permanent = True
         flash("Log in successful!")
+        # if next_url:
+        #     return f"Next url is {next_url}"
+        if next_url:
+            return redirect(next_url)
+        #     # return f"Next url is {next_url}"
         return redirect(url_for('user_overview', username=username))
     else:
         flash('Invalid credentials. Try again!')
@@ -92,7 +106,7 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('index'))
 
-@app.route("/<username>")
+@app.route("/<username>/")
 @check_login
 def user_overview(username):
     user_targets = g.storage.get_user_targets(username)
@@ -102,10 +116,8 @@ def user_overview(username):
     # Pagination
     page_str = request.args.get('page')
     pagination_params = _paginate(user_nutrition, page_str)
-    # return f"{pagination_params}"
-    # return f"{_paginate(user_nutrition, page_str)}"
     if not pagination_params:
-        return "The page does not exist."
+        return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
     # return f"{page}, {start}, {end}, {total_pages}"
@@ -120,6 +132,9 @@ def user_overview(username):
 @app.route("/<username>/<date>")
 @check_login
 def day_view(username, date):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
+    
     daily_total = g.storage.daily_total_nutrition(username, date)
     nutrition_left = g.storage.get_nutrition_left(username, date)
     daily_nutrition = g.storage.get_daily_nutrition(username, date)
@@ -127,7 +142,7 @@ def day_view(username, date):
     page_str = request.args.get('page')
     pagination_params = _paginate(daily_nutrition, page_str)
     if not pagination_params:
-        return "The page does not exist."
+        return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
 
@@ -139,12 +154,16 @@ def day_view(username, date):
 @app.route("/<username>/<date>/add_new") 
 @check_login
 def new_nutrition_entry(username, date):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
     user_meals = g.storage.get_user_meals(username)
     return render_template('add_nutrition_entry.html', username=username, date=date, user_meals=user_meals, input_nutrition={})
 
 @app.route("/<username>/<date>/add_new", methods=["POST"])
 @check_login
 def add_nutrition_entry(username, date):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
     # Extract entered data
     calories = request.form["calories"]
     protein = request.form["protein"]
@@ -213,6 +232,12 @@ def update_targets(username):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/edit")
 @check_login
 def edit_entry(username, date, nutrition_entry_id):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
+
+    available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
+    if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
+        return render_template('bad_url.html', username=username)
     # Need to pass meal associated with entry to diplay in edit view
     user_meals = g.storage.get_user_meals(username)
     nutrition_data = g.storage.find_nutrition_entry_by_id(username, nutrition_entry_id)
@@ -224,6 +249,13 @@ def edit_entry(username, date, nutrition_entry_id):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/edit", methods=["POST"])
 @check_login
 def update_entry(username, date, nutrition_entry_id):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
+    
+    available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
+    if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
+        return render_template('bad_url.html', username=username)
+    
     calories = request.form["calories"]
     protein = request.form["protein"]
     fat = request.form["fat"]
@@ -251,6 +283,13 @@ def update_entry(username, date, nutrition_entry_id):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/delete", methods=["POST"])
 @check_login
 def delete_entry(username, date, nutrition_entry_id):
+    if not is_date_valid(date):
+        return render_template('bad_url.html', username=username)
+    
+    available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
+    if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
+        return render_template('bad_url.html', username=username)
+    
     g.storage.delete_nutrition_entry(nutrition_entry_id)
     flash('The entry was deleted!')
     return redirect(url_for('day_view', username=username, date=date))
@@ -263,7 +302,7 @@ def display_meals(username):
     pagination_params = _paginate(user_meals, page_str)
 
     if not pagination_params:
-        return "The page does not exist."
+        return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
 
@@ -275,12 +314,20 @@ def display_meals(username):
 @app.route("/<username>/<int:meal_id>/edit")
 @check_login
 def edit_meal(username, meal_id):
+    available_meal_ids = g.storage.get_all_meal_ids(username)
+    if not is_meal_id_valid(meal_id, available_meal_ids):
+        return render_template('bad_url.html', username=username)
+    
     meal_data = g.storage.get_meal_data_by_id(meal_id)
     return render_template('edit_meal.html', username=username, meal_data=meal_data)
 
 @app.route("/<username>/<int:meal_id>/edit", methods=["POST"])
 @check_login
 def update_meal(username, meal_id):
+    available_meal_ids = g.storage.get_all_meal_ids(username)
+    if not is_meal_id_valid(meal_id, available_meal_ids):
+        return render_template('bad_url.html', username=username)
+    
     new_meal = request.form["meal"].strip()
     # Validate data. If input not valid, display error and user entries
     error_len = error_for_meal_len(new_meal)
@@ -308,6 +355,10 @@ def update_meal(username, meal_id):
 @app.route("/<username>/<int:meal_id>/delete", methods=["POST"])
 @check_login
 def delete_meal(username, meal_id):
+    available_meal_ids = g.storage.get_all_meal_ids(username)
+    if not is_meal_id_valid(meal_id, available_meal_ids):
+        return render_template('bad_url.html', username=username)
+    
     g.storage.delete_meal(meal_id)
     flash('The meal was deleted!')
     return redirect(url_for('display_meals', username=username))
@@ -344,7 +395,7 @@ def add_new_meal(username):
     page_str = request.args.get('page')
     pagination_params = _paginate(user_meals, page_str)
     if not pagination_params:
-        return "The page does not exist."
+        return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
     user_meals_on_page = user_meals[start:end]

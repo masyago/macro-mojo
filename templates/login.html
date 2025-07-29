@@ -10,6 +10,8 @@
 
         <label for="pwd">Password: </label>
         <input type="password" name="pwd" required />
+
+        <input type="hidden" name="next" value="{{ request.args.get('next', '' )}}" />
         
         <div class="login-buttons">
             <button type="submit">Login</button>
