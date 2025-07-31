@@ -2,6 +2,7 @@
 
 {% block content %}
     <h3>Adding new entry for {{ date }}:</h3>
+
     <form action="{{ url_for('add_nutrition_entry', username=username, date=date) }}" method="post">
         <table class="new-entry">
             <tr>
@@ -67,7 +68,7 @@
         </table>
     </form>
     <p></p>
-    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button" class="back-to-dashboard-button">Back to Dashboard</button></a>
 
 
 

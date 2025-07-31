@@ -5,6 +5,7 @@ from flask import (
     flash,
     Flask,
     g,
+    make_response,
     redirect,
     render_template,
     request,
@@ -72,6 +73,10 @@ def _paginate(data, page_str):
 def load_db():
     g.storage = DatabasePersistence()
 
+@app.route("/favicon.ico/")
+def favicon():
+    return make_response("", 204)
+
 @app.route("/")
 def index():
     return render_template('index.html')
@@ -120,11 +125,7 @@ def user_overview(username):
         return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
-    # return f"{page}, {start}, {end}, {total_pages}"
-    
     user_nutrition_on_page = user_nutrition[start:end]
-    # return f"{user_nutrition_on_page}"
-
     return render_template('dashboard.html', username=username, 
                            user_targets=user_targets, user_nutrition_on_page=user_nutrition_on_page,
                            total_pages=total_pages, page=page, date=today)
@@ -135,9 +136,11 @@ def day_view(username, date):
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     
-    daily_total = g.storage.daily_total_nutrition(username, date)
+    daily_total = g.storage.daily_total_nutrition(username, date) # need to add what happens if no nutrition entries aval for that day
     nutrition_left = g.storage.get_nutrition_left(username, date)
     daily_nutrition = g.storage.get_daily_nutrition(username, date)
+    if not daily_nutrition:
+        return render_template('empty_day.html', date=date, username=username)
 
     page_str = request.args.get('page')
     pagination_params = _paginate(daily_nutrition, page_str)
@@ -148,7 +151,8 @@ def day_view(username, date):
 
     daily_nutrition_entries_on_page = daily_nutrition[start:end]
 
-    return render_template('day_view.html', username=username, daily_nutrition_entries_on_page=daily_nutrition_entries_on_page,
+    return render_template('day_view.html', username=username,
+                           daily_nutrition_entries_on_page=daily_nutrition_entries_on_page,
                            total_pages=total_pages, page=page, date=date, daily_total=daily_total, nutrition_left=nutrition_left)
 
 @app.route("/<username>/<date>/add_new") 
@@ -193,14 +197,14 @@ def add_nutrition_entry(username, date):
 @app.route("/<username>/targets")
 @check_login
 def display_targets(username):
-    user_targets = g.storage.get_user_targets(username=username)
+    user_targets = g.storage.get_user_targets(username)
     return render_template('targets.html', username=username,
                            user_targets=user_targets)
 
 @app.route("/<username>/targets/edit")
 @check_login
 def edit_targets(username):
-    user_targets = g.storage.get_user_targets(username=username)
+    user_targets = g.storage.get_user_targets(username)
     return render_template('edit_targets.html', username=username, user_targets=user_targets)
 
 @app.route("/<username>/targets/edit", methods=["POST"])
@@ -273,7 +277,8 @@ def update_entry(username, date, nutrition_entry_id):
                               'meal': meal,
                             }
         user_meals = g.storage.get_user_meals(username)
-        return render_template('edit_entry.html', username=username, date=date, nutrition_entry_id=nutrition_entry_id, nutrition_data=input_nutrition, user_meals=user_meals)
+        return render_template('edit_entry.html', username=username, date=date, nutrition_entry_id=nutrition_entry_id, 
+                               nutrition_data=input_nutrition, user_meals=user_meals)
 
     g.storage.update_nutrition_entry(nutrition_entry_id, calories,
                                      protein, fat, carbs, meal)

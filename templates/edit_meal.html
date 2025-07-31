@@ -23,6 +23,6 @@
         <button type="submit" class="delete">Delete "{{ meal_data.name }}"</button>
     </form>
     <p></p>
-    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button" class="back-to-dashboard-button">Back to Dashboard</button></a>
 
 {% endblock %}

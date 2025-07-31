@@ -10,7 +10,7 @@
         <p>Recommended: Add new meals instead of editing or deleting existing meals.</p>
         <a href="{{ url_for('new_meal', username=username) }}"><button type="button" class="add-new-meal-button">Add new meal</button></a> 
     </div>
-    <div>Click on a meal to edit or delete</div>
+    <div class="instructions">Click on a meal to edit or delete</div>
     <table class="meals-table">
         {% for meal in user_meals_on_page %}
         <tr>
@@ -21,17 +21,18 @@
         </tr>
         {% endfor %}
     </table>
-    <div>
+    <div class="pages">
         {% if page > 1 %}
-            <a href="{{ url_for('display_meals', username=username, page=page-1) }}">Previous</a>
+            <a href="{{ url_for('display_meals', username=username, page=page-1) }}"><button type="button">Previous</button></a>
         {% endif %}
         
             <span>Page {{ page }} of {{ total_pages }}</span>
 
         {% if page < total_pages %}
-            <a href="{{ url_for('display_meals', username=username, page=page+1) }}">Next</a>
+            <a href="{{ url_for('display_meals', username=username, page=page+1) }}"><button type="button">Next</button></a>
         {% endif %}
     </div>
-    <a href="{{ url_for('user_overview', username=username) }}"><button type="button">Back to Dashboard</button></a>
+    <hr>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button" class="back-to-dashboard-button">Back to Dashboard</button></a>
 {% endblock %}
 

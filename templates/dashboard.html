@@ -30,6 +30,7 @@
             <td>{{ user_targets.carb_target }}</td>
         </tr>
     </table>
+    
     <h3>Nutrition per day</h3>
     <table>
         <tr>
@@ -49,17 +50,18 @@
             </tr>
          {% endfor %}
     </table>
-    <div>
+    <div class="pages">
         {% if page > 1 %}
-            <a href="{{ url_for('user_overview', username=username, page=page-1) }}">Previous</a>
+            <a href="{{ url_for('user_overview', username=username, page=page-1) }}"><button type="button">Previous</button></a>
         {% endif %}
 
             <span>Page {{ page }} of {{ total_pages }}</span>
 
         {% if page < total_pages %}
-            <a href="{{ url_for('user_overview', username=username, page=page+1) }}">Next</a>
+            <a href="{{ url_for('user_overview', username=username, page=page+1) }}"><button type="button">Next</button></a>
         {% endif %}
     </div>
+    <hr>
     <div>
         <h4>Customize available meals and snacks</h4>
         <a href="{{ url_for('display_meals', username=username) }}"><button type="button" class="edit-meals-button">Edit meals</button></a>

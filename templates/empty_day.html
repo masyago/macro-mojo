@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2>No entries for {{ date }} yet.</h2>
+    <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}"><button type="button" class="add-meal-button">Add new entry</button></a> 
+   
+    <hr>
+    <a href="{{ url_for('user_overview', username=username) }}"><button type="button" class="back-to-dashboard-button">Back to Dashboard</button></a>
+{% endblock %}

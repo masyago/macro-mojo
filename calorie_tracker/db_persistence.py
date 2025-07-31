@@ -92,7 +92,7 @@ class DatabasePersistence:
         # Get all nutrition data, including meals, for specific date
         query = """
                 SELECT nutrition.id AS "nutrition_entry_id",
-                       TO_CHAR(entered_at, 'YYYY-MM-DD HH24:MI') AS "Added at",
+                       entered_at AS "Added at",
                         calories AS "Calories",
                         protein AS "Protein",
                         fat AS "Fat",
@@ -101,7 +101,7 @@ class DatabasePersistence:
                 FROM nutrition  
                 INNER JOIN meals ON nutrition.meal_id = meals.id
                 WHERE nutrition.user_id = %s AND "date" = %s
-                ORDER BY entered_at DESC
+                ORDER BY entered_at DESC, meals.name ASC
                 """
     
         logger.info("Executing query: %s with user_id %s and date %s", query, user_id, date)
@@ -322,7 +322,7 @@ class DatabasePersistence:
                 INSERT INTO meals (name, user_id)
                         VALUES (%s, %s)
                 """
-        logger.info("Executing query: %s with meal %s and user_id %s", query, new_meal, user_id)
+        logger.info("Executing query: %s with name %s and user_id %s", query, new_meal, user_id)
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (new_meal, user_id))
@@ -393,9 +393,11 @@ class DatabasePersistence:
             all_nutrition_ids.append(item['id'])
         return all_nutrition_ids
 
-db_p = DatabasePersistence()
-# print(db_p.get_all_meal_ids('test_user'))
-print(db_p.get_all_nutrition_entries_ids('test_user'))
+# db_p = DatabasePersistence()
+# print(db_p.get_daily_nutrition('test_user', '2025-08-02'))
+# print(db_p.get_user_targets('test_user'))
+# # print(db_p.get_all_meal_ids('test_user'))
+# print(db_p.get_all_nutrition_entries_ids('test_user'))
 
 # # print(db_p.get_user_targets('test_user'))
 # # print(db_p.get_daily_nutrition('test_user', '2025-07-28'))

@@ -32,12 +32,15 @@ Table nutrition {
 Table meals {
     id serial [pk]
     name text [not null]
+    user_id integer
 }
 
 
 
-Ref: users.id < targets.user_id
+Ref: users.id - targets.user_id
 
 Ref: users.id < nutrition.user_id
 
 Ref: meals.id < nutrition.meal_id
+
+Ref: users.id - meals.user_id
