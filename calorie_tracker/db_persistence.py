@@ -11,7 +11,6 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 class DatabasePersistence:
-    
     @contextmanager
     def _database_connect(self):
         connection = psycopg2.connect(dbname='cal_tracker')
@@ -32,9 +31,9 @@ class DatabasePersistence:
         if user_row:
             stored_password = user_row['hashed_pwd'].encode('utf-8')
             is_password_valid = bcrypt.checkpw(password.encode('utf-8'), stored_password)
-
             if is_password_valid:
                 return True
+            
         return False
     
     def _find_user_id_by_username(self, username):
@@ -45,14 +44,14 @@ class DatabasePersistence:
                 cursor.execute(query, (username, ))
                 user_row = cursor.fetchone()
 
-        if not user_row: # test these two lines
+        if not user_row:
             return None
         user_id = user_row['id']
         return user_id
     
+    # Calculate sum of each nutrition parameter for specific date
     def daily_total_nutrition(self, username, date):
         user_id = self._find_user_id_by_username(username)
-
         query = """
                 SELECT SUM(calories) AS calories, SUM(protein) as protein,
                        SUM(fat) AS fat, SUM(carbs) AS carbs
@@ -66,7 +65,8 @@ class DatabasePersistence:
                 daily_total = cursor.fetchone()
         
         return daily_total
-        
+    
+    # Calculate leftover nutrition by subtracting sum from target
     def get_nutrition_left(self, username, date):
         user_id = self._find_user_id_by_username(username)
         query = """
@@ -154,7 +154,8 @@ class DatabasePersistence:
             with connection.cursor() as cursor:
                 cursor.execute(query, (new_calorie_target, new_protein_target,
                                new_fat_target, new_carb_target, user_id))
-
+                
+    # Sum nutrition parameters for each day
     def get_user_all_nutrition(self, username):
         user_id = self._find_user_id_by_username(username)
         query = """SELECT date,
@@ -181,17 +182,7 @@ class DatabasePersistence:
     def add_nutrition_entry(self, date, username,
                             calories, protein, fat, carbs, meal):
         user_id = self._find_user_id_by_username(username)
-        query_meal_id = """
-            SELECT id FROM meals
-            WHERE name = %s
-        """
-        logger.info("Executing query: %s with name %s", query_meal_id, meal)
-        with self._database_connect() as connection:
-            with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query_meal_id, (meal, ))
-                result = cursor.fetchone()
-        meal_id = result['id'] 
-
+        meal_id = self.find_meal_id(meal)
         query_add_nutrition = """
             INSERT INTO nutrition 
                         (user_id, meal_id, date, calories, protein, fat, carbs)
@@ -207,7 +198,7 @@ class DatabasePersistence:
                 cursor.execute(query_add_nutrition, (user_id, meal_id,
                         date, calories, protein, fat, carbs))
 
-    def find_nutrition_entry_by_id(self, username, nutrition_entry_id): # we can add user_id or username (with JOIN) 
+    def find_nutrition_entry_by_id(self, nutrition_entry_id):
         query = """
                 SELECT * FROM nutrition
                 WHERE id = %s
@@ -225,11 +216,8 @@ class DatabasePersistence:
         meal_id = self.find_meal_id(meal)
         query = """
                 UPDATE nutrition
-                SET calories = %s,
-                    protein = %s,
-                    fat = %s,
-                    carbs = %s,
-                    meal_id = %s
+                SET calories = %s, protein = %s, fat = %s,
+                    carbs = %s, meal_id = %s
                 WHERE id = %s     
                 """
         logger.info("""
@@ -288,7 +276,8 @@ class DatabasePersistence:
                 SET name = %s
                 WHERE id = %s AND user_id = %s
                 '''
-        logger.info("Executing query: %s with name %s and id %s", query, new_meal, meal_id, user_id)
+        logger.info("Executing query: %s with name %s and id %s", query, new_meal,
+                                      meal_id, user_id)
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (new_meal, meal_id, user_id))
@@ -322,7 +311,8 @@ class DatabasePersistence:
                 INSERT INTO meals (name, user_id)
                         VALUES (%s, %s)
                 """
-        logger.info("Executing query: %s with name %s and user_id %s", query, new_meal, user_id)
+        logger.info("Executing query: %s with name %s and user_id %s", query, 
+                                      new_meal, user_id)
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (new_meal, user_id))
@@ -392,17 +382,3 @@ class DatabasePersistence:
         for item in nutrition_results:
             all_nutrition_ids.append(item['id'])
         return all_nutrition_ids
-
-# db_p = DatabasePersistence()
-# print(db_p.get_daily_nutrition('test_user', '2025-08-02'))
-# print(db_p.get_user_targets('test_user'))
-# # print(db_p.get_all_meal_ids('test_user'))
-# print(db_p.get_all_nutrition_entries_ids('test_user'))
-
-# # print(db_p.get_user_targets('test_user'))
-# # print(db_p.get_daily_nutrition('test_user', '2025-07-28'))
-# print(type(db_p._find_user_id_by_username('test_user')))
-# # print(db_p.find_login('test_user', 'test_pwd'))
-# print(db_p.get_user_all_nutrition('test_user'))
-
-# print(db_p.find_meal_id('latte'))

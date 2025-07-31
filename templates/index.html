@@ -8,7 +8,9 @@
         <div>
             Signed in as {{ session.username }}
             <button class="logout-button" type="submit">Log Out</button>
-            <a href="{{ url_for('user_overview', username=session.username) }}"><button type="button">Back to Dashboard</button></a>
+            <a href="{{ url_for('user_overview', username=session.username) }}">
+                <button type="button">Back to Dashboard</button>
+            </a>
         </div>
         </form>
     {% else %}

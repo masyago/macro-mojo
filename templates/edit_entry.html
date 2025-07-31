@@ -50,7 +50,9 @@
                     <select type="text" name="meal" required>
                         <option value="">Select one</option>
                         {% for meal in user_meals %} 
-                            <option value="{{ meal.name }}" {% if nutrition_data.get('meal') == meal.name %}selected{% endif %}>{{ meal.name }}</option>
+                            <option value="{{ meal.name }}" {% if nutrition_data.get('meal') == meal.name %}selected{% endif %}>
+                                {{ meal.name }}
+                            </option>
                         {% endfor %}
                     </select>
                 </td>
@@ -65,8 +67,7 @@
         <button type="submit" class="delete">Delete entry</button>
     </form>
     <p></p>
-    <a href="{{ url_for('user_overview', username=username) }}"><button type="button" class="back-to-dashboard-button">Back to Dashboard</button></a>
-
-
-
+    <a href="{{ url_for('user_overview', username=username) }}">
+        <button type="button" class="back-to-dashboard-button">Back to Dashboard</button>
+    </a>
 {% endblock %}

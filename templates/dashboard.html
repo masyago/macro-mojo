@@ -42,7 +42,8 @@
         </tr>
         {% for nutrition_row in user_nutrition_on_page %}
             <tr>
-                <td><a href="{{ url_for('day_view', username=username, date=nutrition_row.date ) }}">{{ nutrition_row.date }}</a></td>
+                <td><a href="{{ url_for('day_view', username=username, date=nutrition_row.date ) }}">
+                    {{ nutrition_row.date }}</a></td>
                 <td>{{ nutrition_row.calories }}</td>
                 <td>{{ nutrition_row.protein }}</td>
                 <td>{{ nutrition_row.fat }}</td>
@@ -52,19 +53,22 @@
     </table>
     <div class="pages">
         {% if page > 1 %}
-            <a href="{{ url_for('user_overview', username=username, page=page-1) }}"><button type="button">Previous</button></a>
+            <a href="{{ url_for('user_overview', username=username, page=page-1) }}">
+                <button type="button">Previous</button></a>
         {% endif %}
 
             <span>Page {{ page }} of {{ total_pages }}</span>
 
         {% if page < total_pages %}
-            <a href="{{ url_for('user_overview', username=username, page=page+1) }}"><button type="button">Next</button></a>
+            <a href="{{ url_for('user_overview', username=username, page=page+1) }}">
+                <button type="button">Next</button></a>
         {% endif %}
     </div>
     <hr>
     <div>
         <h4>Customize available meals and snacks</h4>
-        <a href="{{ url_for('display_meals', username=username) }}"><button type="button" class="edit-meals-button">Edit meals</button></a>
+        <a href="{{ url_for('display_meals', username=username) }}">
+            <button type="button" class="edit-meals-button">Edit meals</button>
+        </a>
     </div>
-
 {% endblock %}

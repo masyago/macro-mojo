@@ -16,24 +16,26 @@ from functools import wraps
 
 from calorie_tracker.utils import (
     check_meal_duplicates,
+    error_for_date_format,
+    error_for_meal_len,
     error_for_nutrition_entry,
     error_for_targets,
-    error_for_meal_len,
+    get_todays_date,
     is_date_valid,
     is_meal_id_valid,
     is_nutrition_id_valid,
 )
 
-from werkzeug.exceptions import NotFound
+# from werkzeug.exceptions import NotFound
 from calorie_tracker.db_persistence import DatabasePersistence
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
-@app.errorhandler(NotFound)
-def page_not_found(e):
-    return "MORE COFFEE!", 404
-    # return render_template('bad_url.html'), 404
+# @app.errorhandler(NotFound)
+# def page_not_found(e):
+#     return "MORE COFFEE!", 404
+#     # return render_template('bad_url.html'), 404
 
 def user_logged_in():
     return 'username' in session
@@ -95,11 +97,8 @@ def process_login():
         session['username'] = username
         session.permanent = True
         flash("Log in successful!")
-        # if next_url:
-        #     return f"Next url is {next_url}"
         if next_url:
             return redirect(next_url)
-        #     # return f"Next url is {next_url}"
         return redirect(url_for('user_overview', username=username))
     else:
         flash('Invalid credentials. Try again!')
@@ -136,7 +135,7 @@ def day_view(username, date):
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     
-    daily_total = g.storage.daily_total_nutrition(username, date) # need to add what happens if no nutrition entries aval for that day
+    daily_total = g.storage.daily_total_nutrition(username, date)
     nutrition_left = g.storage.get_nutrition_left(username, date)
     daily_nutrition = g.storage.get_daily_nutrition(username, date)
     if not daily_nutrition:
@@ -148,9 +147,7 @@ def day_view(username, date):
         return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
-
     daily_nutrition_entries_on_page = daily_nutrition[start:end]
-
     return render_template('day_view.html', username=username,
                            daily_nutrition_entries_on_page=daily_nutrition_entries_on_page,
                            total_pages=total_pages, page=page, date=date, daily_total=daily_total, nutrition_left=nutrition_left)
@@ -161,7 +158,8 @@ def new_nutrition_entry(username, date):
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     user_meals = g.storage.get_user_meals(username)
-    return render_template('add_nutrition_entry.html', username=username, date=date, user_meals=user_meals, input_nutrition={})
+    return render_template('add_nutrition_entry.html', username=username, date=date, user_meals=user_meals,
+                           input_nutrition={}, today=get_todays_date())
 
 @app.route("/<username>/<date>/add_new", methods=["POST"])
 @check_login
@@ -169,30 +167,40 @@ def add_nutrition_entry(username, date):
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     # Extract entered data
+    entry_date = request.form["entry_date"]
     calories = request.form["calories"]
     protein = request.form["protein"]
     fat = request.form["fat"]
     carbs = request.form["carbs"]
     meal = request.form["meal"]
-
-    # Validate data. If input not valid, display error and user entries
-    error = error_for_nutrition_entry(calories, protein, fat, carbs)
-    if error:
-        flash(error)
+    
+    # Validate inputs, display errors and re-display template with input values
+    errors = []
+    error_date = error_for_date_format(entry_date)
+    if error_date:
+        errors.append(error_date)
+    error_nutrition = error_for_nutrition_entry(calories, protein, fat, carbs)
+    if error_nutrition:
+        errors.append(error_nutrition)
+    
+    if errors:
+        for error in errors:
+            flash(error)
         input_nutrition = {'calories': calories,
-                              'protein': protein,
-                              'fat': fat,
-                              'carbs': carbs,
-                              'meal': meal,
+                            'protein': protein,
+                            'fat': fat,
+                            'carbs': carbs,
+                            'meal': meal,
                             }
         user_meals = g.storage.get_user_meals(username)
-        return render_template('add_nutrition_entry.html', username=username, date=date, input_nutrition=input_nutrition, user_meals=user_meals)
+        return render_template('add_nutrition_entry.html', username=username, date=entry_date, 
+                               input_nutrition=input_nutrition, user_meals=user_meals)
 
     # Execute queries to add data
-    g.storage.add_nutrition_entry(date, username,
+    g.storage.add_nutrition_entry(entry_date, username,
                             calories, protein, fat, carbs, meal)
     flash('New data entry added!')
-    return redirect(url_for('day_view', username=username, date=date))
+    return redirect(url_for('day_view', username=username, date=entry_date))
 
 @app.route("/<username>/targets")
 @check_login
@@ -215,9 +223,10 @@ def update_targets(username):
     new_protein_target = request.form["protein"]
     new_fat_target = request.form["fat"]
     new_carb_target = request.form["carbs"]
-
+    
+    # Validate inputs, display errors and re-display template with input values
     error = error_for_targets(new_calorie_target, new_protein_target,
-                      new_fat_target, new_carb_target)
+                              new_fat_target, new_carb_target)
     if error:
         flash(error)
         input_user_targets = {'calorie_target' : new_calorie_target,
@@ -236,16 +245,18 @@ def update_targets(username):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/edit")
 @check_login
 def edit_entry(username, date, nutrition_entry_id):
+    # Validate date part of URL
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
-
+    
+    # Validate nutrition id part of URL 
     available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
     if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
         return render_template('bad_url.html', username=username)
-    # Need to pass meal associated with entry to diplay in edit view
+    
+    # Get nutrition and meal data to diplay in `edit_entry` view
     user_meals = g.storage.get_user_meals(username)
-    nutrition_data = g.storage.find_nutrition_entry_by_id(username, nutrition_entry_id)
-
+    nutrition_data = g.storage.find_nutrition_entry_by_id(nutrition_entry_id)
     return render_template('edit_entry.html', username=username, date=date,
                            nutrition_data=nutrition_data,
                            nutrition_entry_id=nutrition_entry_id, user_meals=user_meals)
@@ -253,20 +264,23 @@ def edit_entry(username, date, nutrition_entry_id):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/edit", methods=["POST"])
 @check_login
 def update_entry(username, date, nutrition_entry_id):
+    # Validate date part of URL
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     
+    # Validate nutrition id part of URL 
     available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
     if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
         return render_template('bad_url.html', username=username)
     
+    # Extract new values from HTTP request
     calories = request.form["calories"]
     protein = request.form["protein"]
     fat = request.form["fat"]
     carbs = request.form["carbs"]
     meal = request.form["meal"]
 
-    # Validate data. If input not valid, display error and user entries
+    # Validate data. If input not valid, display error and re-display input values
     error = error_for_nutrition_entry(calories, protein, fat, carbs)
     if error:
         flash(error)
@@ -288,9 +302,11 @@ def update_entry(username, date, nutrition_entry_id):
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/delete", methods=["POST"])
 @check_login
 def delete_entry(username, date, nutrition_entry_id):
+    # Validate date part of URL
     if not is_date_valid(date):
         return render_template('bad_url.html', username=username)
     
+    # Validate nutrition id part of URL 
     available_nutrition_ids = g.storage.get_all_nutrition_entries_ids(username)
     if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
         return render_template('bad_url.html', username=username)
@@ -305,12 +321,12 @@ def display_meals(username):
     user_meals = g.storage.get_user_meals(username=username)
     page_str = request.args.get('page')
     pagination_params = _paginate(user_meals, page_str)
-
+    
+    # Validate URL page parameters
     if not pagination_params:
         return render_template('bad_url.html', username=username)
     
     page, start, end, total_pages = pagination_params
-
     user_meals_on_page = user_meals[start:end]
     return render_template('meals.html', username=username,
                            total_pages=total_pages, page=page,
@@ -319,6 +335,7 @@ def display_meals(username):
 @app.route("/<username>/<int:meal_id>/edit")
 @check_login
 def edit_meal(username, meal_id):
+    # Validate `meal_id`
     available_meal_ids = g.storage.get_all_meal_ids(username)
     if not is_meal_id_valid(meal_id, available_meal_ids):
         return render_template('bad_url.html', username=username)
@@ -329,12 +346,13 @@ def edit_meal(username, meal_id):
 @app.route("/<username>/<int:meal_id>/edit", methods=["POST"])
 @check_login
 def update_meal(username, meal_id):
+    # Validate `meal_id`
     available_meal_ids = g.storage.get_all_meal_ids(username)
     if not is_meal_id_valid(meal_id, available_meal_ids):
         return render_template('bad_url.html', username=username)
     
     new_meal = request.form["meal"].strip()
-    # Validate data. If input not valid, display error and user entries
+    # Validate data. If input not valid, display error and re-display user entry
     error_len = error_for_meal_len(new_meal)
     if error_len:
         flash(error_len)
@@ -342,6 +360,7 @@ def update_meal(username, meal_id):
                           'id': meal_id}
         return render_template('edit_meal.html', username=username, meal_data=temp_meal_data)
     
+    # Get all meal names except for current meal to check edited name for uniqueness
     existing_meals = []
     for item in g.storage.get_all_meal_names_except_current(username, meal_id):
         existing_meals.append(item['name'])
@@ -360,6 +379,7 @@ def update_meal(username, meal_id):
 @app.route("/<username>/<int:meal_id>/delete", methods=["POST"])
 @check_login
 def delete_meal(username, meal_id):
+    # Validate `meal_id`
     available_meal_ids = g.storage.get_all_meal_ids(username)
     if not is_meal_id_valid(meal_id, available_meal_ids):
         return render_template('bad_url.html', username=username)
@@ -378,13 +398,15 @@ def new_meal(username):
 def add_new_meal(username):
     # Extract entered data
     new_meal = request.form["meal"].strip()
-
+    
+    # Validate data. If input not valid, display error and re-display user entry
     error_len = error_for_meal_len(new_meal)
     if error_len:
         flash(error_len)
         temp_meal_name = new_meal
         return render_template('new_meal.html', username=username, temp_meal_name=temp_meal_name)
     
+    # Get all meal names to check new name for uniqueness
     existing_meals = []
     for item in g.storage.get_all_meal_names(username):
         existing_meals.append(item['name'])
@@ -394,7 +416,8 @@ def add_new_meal(username):
         flash(error_duplicate)
         temp_meal_name = new_meal
         return render_template('new_meal.html', username=username, temp_meal_name=temp_meal_name)
-
+    
+    # Check pagination URL parameters and split meals into pages
     g.storage.add_meal(username, new_meal)
     user_meals = g.storage.get_user_meals(username=username)
     page_str = request.args.get('page')
