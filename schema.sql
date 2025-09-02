@@ -14,26 +14,17 @@ CREATE TABLE users (
                                       ON DELETE CASCADE
 );
 
-CREATE TABLE meals (
-    id serial PRIMARY KEY,
-    name text UNIQUE NOT NULL,
-    user_id integer REFERENCES users(id)
-                    ON DELETE CASCADE,
-    UNIQUE(name, user_id)
-);
-
 CREATE TABLE nutrition (
     id serial PRIMARY KEY,
     user_id integer NOT NULL REFERENCES users(id)
-                             ON DELETE CASCADE,
-    meal_id integer NOT NULL REFERENCES meals(id)
                              ON DELETE CASCADE,
     "date" date NOT NULL DEFAULT NOW(),
     entered_at timestamp NOT NULL DEFAULT NOW(),
     calories integer NOT NULL,
     protein integer NOT NULL,
     fat integer NOT NULL,
-    carbs integer NOT NULL
+    carbs integer NOT NULL,
+    meal text
 );
 
 

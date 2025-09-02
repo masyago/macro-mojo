@@ -55,17 +55,8 @@
                     </label>
                 </td>
                 <td>
-                    <select type="text" name="meal" required>
-                        <option value="">Select one</option>
-                        {% for meal in user_meals %}
-                            <option value="{{ meal.name }}"
-                            {% if input_nutrition.get('meal') == meal.name %}selected{% endif %}>
-                            {{ meal.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    <input type="text" name="meal" value="{{ input_nutrition.meal | default('') }}" maxlength="100" />
                 </td>
-                
             </tr>
             <tr>
                 <td class="submit-edits-button">

@@ -23,11 +23,11 @@ In terminal, run the command to install required dependencies:
 
 UPLOAD DATA
 - Create a database `cal_tracker`. 
-   - To do that: From a terminal, run command `createdb cal_tracker`
+   - To do that: From a terminal, run command `createdb macro_mojo`
 - Import file with schema to the database by running the following command in terminal:
-    `psql -d cal_tracker < schema.sql`
+    `psql -d macro_mojo < schema.sql`
 - Import file with seed data to the database by running the following command in terminal:
-    `psql -d cal_tracker < data.sql`
+    `psql -d macro_mojo < data.sql`
 
 RUN THE APP
 - To initialize the application, run the command in your terminal:
