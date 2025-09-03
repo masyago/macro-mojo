@@ -1,22 +1,27 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h3>Welcome to the Calorie Tracker!</h3>
+<div class="container">
+    <div class="welcome-container">
+        <div class="logo">Macro Mojo</div>
+        <h1>Welcome to the Calorie Tracker!</h1>
 
-    {% if session.username %}
-        <form action="{{ url_for('logout') }}" method="post">
-        <div>
-            Signed in as {{ session.username }}
-            <button class="logout-button" type="submit">Log Out</button>
-            <a href="{{ url_for('user_overview', username=session.username) }}">
-                <button type="button">Back to Dashboard</button>
-            </a>
-        </div>
-        </form>
-    {% else %}
-        <div>
-        <a href="{{ url_for('dispay_login_page') }}"><button type="submit">Log In</button></a>
-        </div>
-    {% endif %}
+        {% if session.username %}
+            <div class="user-actions">
+                <p class="user-info">Signed in as {{ session.username }}</p>
+                <div class="button-group">
+                    <a href="{{ url_for('user_overview', username=session.username) }}" class="button primary">Go to Dashboard</a>
+                    <form action="{{ url_for('logout') }}" method="post" class="inline-form">
+                        <button type="submit" class="button secondary">Log Out</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="button-group">
+                <a href="{{ url_for('dispay_login_page') }}" class="button primary">Log In</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock %}  

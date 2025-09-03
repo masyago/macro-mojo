@@ -1,67 +1,93 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <form action="{{ url_for('logout') }}" method="post">
-        <div class="logout-button">
-            <button type="submit">Log Out</button>
+<div class="container">
+    <nav class="top-nav">
+        <div class="logo">Macro Mojo</div>
+        <div class="nav-actions">
+            <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+                <button type="submit" class="button subtle">Log Out</button>
+            </form>
         </div>
-    </form>
+    </nav>
 
-    <div class="dashboard-header">
-        <h2>Welcome, {{ username }}!</h2>
-        <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}"><button type="button" class="add-meal-button">Add new entry</button></a> 
-    </div>
+        <div class="dashboard">
+            <div class="content-container">
+                <header class="welcome-section">
+                    <div class="welcome-header">
+                        <h1>Welcome, {{ username }}!</h1>
+                        <div class="header-actions">
+                            <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}" class="button primary">Add New Entry</a>
+                        </div>
+                    </div>
+                </header>
+            
+            <section class="targets-section">
+                <div class="section-header">
+                    <h2>Daily Targets</h2>
+                    <a href="{{ url_for('edit_targets', username=username) }}" class="button primary">Edit Targets</a>
+                </div>
+                <div class="targets-grid">
+                    <div class="target-card">
+                        <span class="target-label">Calories</span>
+                        <span class="target-value">{{ user_targets.calorie_target }}</span>
+                    </div>
+                    <div class="target-card">
+                        <span class="target-label">Protein</span>
+                        <span class="target-value">{{ user_targets.protein_target }}g</span>
+                    </div>
+                    <div class="target-card">
+                        <span class="target-label">Fat</span>
+                        <span class="target-value">{{ user_targets.fat_target }}g</span>
+                    </div>
+                    <div class="target-card">
+                        <span class="target-label">Carbs</span>
+                        <span class="target-value">{{ user_targets.carb_target }}g</span>
+                    </div>
+                </div>
+            </section>
     
-    <div class="dashboard-targets">
-        <h3>Targets</h3>
-        <a href="{{ url_for('edit_targets', username=username) }}"><button type="button" class="edit-targets-button">Edit targets</button></a>
-    </div>
-    <table>
-        <tr>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Fat</th>
-            <th>Carbohydrates</th>
-        </tr>
-        <tr>
-            <td>{{ user_targets.calorie_target }}</td>
-            <td>{{ user_targets.protein_target }}</td>
-            <td>{{ user_targets.fat_target }}</td>
-            <td>{{ user_targets.carb_target }}</td>
-        </tr>
-    </table>
-    
-    <h3>Nutrition per day</h3>
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Fat</th>
-            <th>Carbohydrates</th>
-        </tr>
-        {% for nutrition_row in user_nutrition_on_page %}
-            <tr>
-                <td><a href="{{ url_for('day_view', username=username, date=nutrition_row.date ) }}">
-                    {{ nutrition_row.date }}</a></td>
-                <td>{{ nutrition_row.calories }}</td>
-                <td>{{ nutrition_row.protein }}</td>
-                <td>{{ nutrition_row.fat }}</td>
-                <td>{{ nutrition_row.carbs }}</td>
-            </tr>
-         {% endfor %}
-    </table>
-    <div class="pages">
-        {% if page > 1 %}
-            <a href="{{ url_for('user_overview', username=username, page=page-1) }}">
-                <button type="button">Previous</button></a>
-        {% endif %}
-
-            <span>Page {{ page }} of {{ total_pages }}</span>
-
-        {% if page < total_pages %}
-            <a href="{{ url_for('user_overview', username=username, page=page+1) }}">
-                <button type="button">Next</button></a>
-        {% endif %}
+            <section class="nutrition-section">
+                <h2>Nutrition History</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Calories</th>
+                                <th>Protein</th>
+                                <th>Fat</th>
+                                <th>Carbohydrates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for nutrition_row in user_nutrition_on_page %}
+                                <tr>
+                                    <td><a href="{{ url_for('day_view', username=username, date=nutrition_row.date ) }}">
+                                        {{ nutrition_row.date }}</a></td>
+                                    <td>{{ nutrition_row.calories }}</td>
+                                    <td>{{ nutrition_row.protein }}</td>
+                                    <td>{{ nutrition_row.fat }}</td>
+                                    <td>{{ nutrition_row.carbs }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    {% if page > 1 %}
+                        <a href="{{ url_for('user_overview', username=username, page=page-1) }}" class="button secondary">Previous</a>
+                    {% endif %}
+                    
+                    <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+                    
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('user_overview', username=username, page=page+1) }}" class="button secondary">Next</a>
+                    {% endif %}
+                </div>
+            </section>
+            </div>
+        </div>
     </div>
 {% endblock %}

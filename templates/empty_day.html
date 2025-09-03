@@ -1,12 +1,25 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h2>No entries for {{ date }} yet.</h2>
-    <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}">
-        <button type="button" class="add-meal-button">Add new entry</button>
-    </a> 
-    <hr>
-    <a href="{{ url_for('user_overview', username=username) }}">
-        <button type="button" class="back-to-dashboard-button">Back to Dashboard</button>
-    </a>
+<div class="container">
+    <nav class="top-nav">
+        <h1 class="logo">Macro Mojo</h1>
+    </nav>
+
+    <div class="content-container center">
+        <div class="empty-state">
+            <h1>{{ date }}</h1>
+            <p class="empty-message">No entries logged for today yet.</p>
+            
+            <div class="empty-actions">
+                <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}" class="button primary">
+                    Add First Entry
+                </a>
+                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

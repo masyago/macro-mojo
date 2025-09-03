@@ -1,173 +1,875 @@
-body {
-    display: grid;
-    place-items: center;
-    font-family: -apple-system, 'Segoe-UI', Roboto, sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
+:root {
+    --color-gray: #B9B4BF;
+    --color-light: #F2F2F2;
+    --color-primary: #718C56;
+    --color-secondary: #A6BF8E;
+    --color-accent: #F2BB9B;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
 }
 
-table {
-  table-layout: fixed;
-  width: 650px;
-  border-collapse: collapse;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin-top: 0px;
-  margin-bottom: 10px;
-  
-}
-
-th {
-    text-align: left;
-    padding: 10px 14px;
-    color: #444;
-    font-size: 14px;
-    font-weight: 500;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #eee;
-    
-}
-
-td {
-    text-align: left;
-    padding: 10px 14px;
-    font-size: 14px;
-    border-bottom: 1px solid #eee;
-}
-
-.login-container {
-    background-color: #fff;
-    width: 300px;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.login-container h2 {
-    color: #1a1a1a;
-    padding: 10px;
-}
-
-.login-form label {
-    color: #444;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 10px;
-}
-
-.login-form input {
-    display: block;
-    position: relative;
-    width: 90%;
-    padding: 10px 14px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    color: #111;
-    font-size: 14px;
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    
 }
 
-.login-buttons {
-    width: auto;
-    margin-left: 10px;
-    padding-bottom: 16px;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-light);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.pages {
-    font-size: 14px;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+}
+
+.dashboard .content-container,
+.day-view .content-container {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Target Cards Container */
+.targets-section {
+    width: 100%;
+    overflow: hidden; /* Prevent horizontal scroll */
+}
+
+/* Navigation and Header */
+.top-nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-lg);
+}
+
+.nav-actions {
+    margin-left: auto;
+}
+
+.welcome-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.welcome-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.header-actions {
+    margin-left: var(--spacing-md);
+}
+
+.header-actions .button {
+    min-width: 160px;
+}
+
+/* Dashboard specific button styles */
+.dashboard .button {
     font-weight: 500;
-    margin-left: 5px;
-    margin-bottom: 20px;
 }
 
-.meals-of-the-day-header{
+.dashboard .button.primary {
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.pagination .button {
+    min-width: 100px;
+}
+
+/* Subtle button style for logout */
+.button.subtle {
+    background-color: #e2e8f0;
+    color: #64748b;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.button.subtle:hover {
+    background-color: #cbd5e1;
+}
+
+/* Welcome Page */
+.welcome-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    min-height: 80vh;
+    text-align: center;
+    padding-top: var(--spacing-lg);
 }
 
-.instructions {
-    font-size: 14px;
-    margin-left: 5px;
+.welcome-container .logo {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-lg);
 }
 
-.new-entry {
-    width: 400px
-}
-
-.targets-changes-table {
-    width: 400px;
-    columns: 2;
-}
-
-.add-meal-button {
+/* Welcome Page Buttons */
+.welcome-container .button-group .button,
+.welcome-container .button-group button {
+    height: 42px;
+    min-width: 160px;
+    padding: 0 var(--spacing-md);
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    margin-left: 20px;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
-.dashboard-header {
-    display: flex;
-    align-items: center;
+.welcome-container .button-group .button.primary,
+.welcome-container .button-group button.primary {
+    background-color: var(--color-primary);
+    color: white;
 }
 
-
-.dashboard-targets {
-    display: flex;
-    align-items: center;
+.welcome-container .button-group .button.secondary,
+.welcome-container .button-group button.secondary {
+    background-color: var(--color-secondary);
+    color: white;
 }
 
-.edit-targets-button {
-    margin-left: 20px;
+/* Login Form */
+.form-container {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 400px;
 }
 
-.submit-edits-button {
-    column-span: all;
-    text-align: right;
-}
-
-.logout-button {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 5px;
-}
-
-.warning-text {
+.container .form-container {
     margin: auto;
-    width: 600px;
-    border: solid;
-    border-radius: 4px;
-    border-color: #EF4444;
-    padding: 5px 10px;
-    background-color: #FEF2F2;
-    font-weight: bold;
-    margin-bottom: 10px;
 }
 
-.recommended-text {
-    margin: auto;
-    width: 600px;
-    border: solid;
-    border-radius: 4px;
-    border-color: #10B981;
-    padding: 5px 10px;
-    margin-bottom: 20px;
-}
-
-.meals-table {
-    width: 250px;
-    margin-top: 5px;
+.form-container h1 {
+    color: var(--color-primary);
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-lg);
     text-align: center;
 }
 
-.add-new-meal-button {
+/* Login Form Specific */
+.login-form .form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.login-form .form-actions .button,
+.login-form .form-actions a.button {
+    min-width: 120px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
     display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-gray);
+}
+
+/* Date input styling */
+input[type="date"] {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1rem;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid var(--color-gray);
+    border-radius: var(--radius-sm);
+    background-color: white;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Calendar popup styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 4px;
+    margin-right: -4px;
+    opacity: 0.8;
+    filter: invert(38%) sepia(15%) saturate(1123%) hue-rotate(58deg) brightness(92%) contrast(86%);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    filter: invert(38%) sepia(15%) saturate(1123%) hue-rotate(58deg) brightness(82%) contrast(96%);
+}
+
+/* Date input focus state */
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(113, 140, 86, 0.2);
+    transition: all 0.2s ease;
+    font-weight: 500;
+    text-align: left;
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-gray);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(113, 140, 86, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.button-group .btn,
+.button-group a.btn {
+    width: 100px;
+    padding: var(--spacing-sm);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.welcome-container h1 {
+    color: var(--color-primary);
+    font-size: 2rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Target Cards Styling */
+.targets-grid {
+    display: flex;
+    margin-top: var(--spacing-md);
+    gap: 16px;
+    flex-wrap: nowrap;
+}
+
+.target-card {
+    background: white;
+    padding: 14px 12px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 140px;
+    max-width: 180px;
+}
+
+.target-label {
+    color: var(--color-gray);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.target-value {
+    color: #333;
+    font-size: 1.125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.user-info {
+    color: var(--color-gray);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.button-group {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    justify-content: space-between;
+}
+
+.form-actions .button {
+    flex: 1;
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-actions .button.primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.form-actions .button.primary:hover {
+    background-color: #5d7346;
+}
+
+.form-actions .button.secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.form-actions .button.secondary:hover {
+    background-color: #95ab7f;
+}
+
+.form-actions .button.danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.form-actions .button.danger:hover {
+    background-color: #c82333;
+}
+
+.danger-zone {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border: 1px solid #dc3545;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.danger-zone h2 {
+    color: #dc3545;
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.form-subtitle {
+    color: var(--color-gray);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.empty-state h1 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-message {
+    color: var(--color-gray);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.empty-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.empty-actions .button {
+    min-width: 150px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease;
+}
+
+.empty-actions .button.primary {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+
+.empty-actions .button.primary:hover {
+    background-color: #5d7346;
+}
+
+/* Error State */
+.error-state {
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.error-message {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-lg);
+    font-weight: 500;
+}
+
+.error-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.error-actions .button {
+    min-width: 150px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease;
+}
+
+.error-actions .button.primary {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+
+.error-actions .button.primary:hover {
+    background-color: #5d7346;
+}
+
+/* Content Layout */
+.content-container {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 600px;
     margin: 0 auto;
-    font-size: 14px;
+}
+
+/* Wider content container for day view */
+.day-view .content-container {
+    max-width: 1000px;
+}
+
+/* Summary Card */
+.summary-card {
+    background: var(--color-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.summary-card h2,
+.meals-section h2 {
+    color: #333;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin: var(--spacing-md) auto;
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md);
+}
+
+/* Default table container width */
+.table-container {
+    max-width: 600px;
+}
+
+/* Full width for day view tables */
+.day-view .table-container {
+    max-width: 100%;
+}
+
+/* Dashboard table styling */
+.nutrition-section h2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.nutrition-section .table-container {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    padding: 0;
+    margin: 0;
+    border-radius: var(--radius-md);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    text-align: center;
+}
+
+/* Specific styling for targets table */
+.targets-view table {
+    max-width: 520px;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.targets-view td,
+.targets-view th {
+    padding: var(--spacing-sm) var(--spacing-md);
+    width: 25%;
+}
+
+thead th {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 500;
+    text-align: left;
+    padding: var(--spacing-md);
+}
+
+tbody td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-light);
+}
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header .form-actions {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.section-header .form-actions .button {
+    height: 42px;
+    min-width: 120px;
+    padding: 0 var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-header .button {
+    height: 42px;
+    padding: 0 var(--spacing-md);
+}
+
+.helper-text {
+    color: var(--color-gray);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.page-info {
+    color: var(--color-gray);
+    font-weight: 500;
+}
+
+/* Edit Links */
+.edit-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.edit-link:hover {
+    text-decoration: underline;
+}
+
+.inline-form {
+    display: inline-block;
+}
+
+/* Buttons */
+.button,
+a.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    min-width: 120px;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.button.primary,
+a.button.primary {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.button.primary:hover {
+    background-color: #5d7346;
+    border-color: #5d7346;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.button.secondary,
+a.button.secondary {
+    background-color: var(--color-secondary);
+    color: white;
+    border-color: var(--color-secondary);
+}
+
+.button.secondary:hover {
+    background-color: #95ab7f;
+    border-color: #95ab7f;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.button.subtle {
+    background-color: #e2e8f0;
+    color: #64748b;
+    border-color: #e2e8f0;
+    box-shadow: none;
+}
+
+.btn:hover, 
+button[type="submit"]:hover,
+.add-new-meal-button:hover,
+.back-to-dashboard-button:hover {
+    background-color: var(--color-secondary);
+}
+
+.btn-secondary {
+    background-color: var(--color-gray);
+}
+
+.btn-secondary:hover {
+    background-color: #a09ba5;
+}
+
+/* Message Styles */
+.message {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-accent);
+    color: white;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: var(--spacing-md) auto;
+}
+
+/* Dashboard */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.targets-section,
+.nutrition-section {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.targets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.target-card {
+    background: var(--color-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.target-card:hover {
+    transform: translateY(-2px);
+}
+
+.target-label {
+    color: var(--color-gray);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.target-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-header h2 {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    background: white;
+    border-radius: var(--radius-sm);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+th {
+    background-color: var(--color-light);
+    padding: var(--spacing-md);
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-secondary);
+}
+
+td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-light);
+}
+
+td a {
+    color: var(--color-primary);
     text-decoration: none;
 }
 
-.back-to-dashboard-button {
-    margin-top: 5px;
+td a:hover {
+    color: var(--color-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .welcome-section,
+    .section-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .welcome-container .logo {
+        font-size: 2rem;
+    }
+    
+    .welcome-container h1 {
+        font-size: 1.5rem;
+    }
 }

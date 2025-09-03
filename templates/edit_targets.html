@@ -1,56 +1,40 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h3>Updating targets for {{ username }}:</h3>
-    <form action="{{ url_for('update_targets', username=username) }}" method="post">
-        <table class="targets-changes-table">
-            <tr>
-                <td>
-                    <label for="calories">
-                        Calories
-                     </label>
-                </td>
-                <td><input type="number" name="calories" value="{{ user_targets.calorie_target}}" required/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="protein">
-                        Protein
-                    </label>
-                </td>
-                <td><input type="number" name="protein" value="{{ user_targets.protein_target }}" required/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="fat">
-                        Fat
-                    </label>
-                </td>
-                <td><input type="number" name="fat" value="{{ user_targets.fat_target }}" required/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="carbs">
-                        Carbohydrates
-                    </label>
-                </td>
-                <td><input type="number" name="carbs" value="{{ user_targets.carb_target }}" required/>
-                </td>
-            </tr>
-            <tr>
-                <td class="submit-edits-button">
-                    <button type="submit">Submit</button>
-                </td>
-            </tr>
-        </table>
-    </form>
-    <p>
-        <a href="{{ url_for('user_overview', username=username) }}">
-            <button type="button" class="back-to-dashboard-button">Back to Dashboard</button>
-        </a>
-    </p>
+<div class="container">
+    <nav class="top-nav">
+        <div class="logo">Macro Mojo</div>
+    </nav>
 
+    <div class="form-container">
+        <h1>Update Targets</h1>
+        <p class="form-subtitle">Updating targets for {{ username }}</p>
+        
+        <form action="{{ url_for('update_targets', username=username) }}" method="post">
+            <div class="form-group">
+                <label for="calories">Calories</label>
+                <input type="number" name="calories" id="calories" value="{{ user_targets.calorie_target}}" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="protein">Protein (g)</label>
+                <input type="number" name="protein" id="protein" value="{{ user_targets.protein_target }}" required/>
+            </div>
+                        <div class="form-group">
+                <label for="fat">Fat (g)</label>
+                <input type="number" name="fat" id="fat" value="{{ user_targets.fat_target }}" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="carbs">Carbs (g)</label>
+                <input type="number" name="carbs" id="carbs" value="{{ user_targets.carb_target }}" required/>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button primary">Update Targets</button>
+                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

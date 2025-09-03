@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
-        <title>Calorie Tracker</title>
+        <title>Macro Mojo</title>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/application.css') }}">
         <link rel="icon" href="data:,">
     </head>
     <body>
         {% for message in get_flashed_messages() %}
-            <p class="message">{{ message }}</p>
+            <div class="message">{{ message }}</div>
         {% endfor %}
-        <main>
-            {% block content %}
-            {% endblock%}
-        </main>
+        {% block content %}
+        {% endblock %}
     </body>
 </html>
