@@ -1,0 +1,206 @@
+:root {
+    --color-primary: #6E8C03;
+    --color-accent: #F2B705;
+    --color-secondary: #F29F05;
+    --color-neutral: #BF8756;
+    --color-dark: #73462D;
+    --color-light: #FFF9F2;
+    --shadow-sm: 0 2px 4px rgba(115, 70, 44, 0.1);
+    --shadow-md: 0 4px 6px rgba(115, 70, 44, 0.15);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* Navigation */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-lg);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-shadow: 1px 1px 0 var(--color-accent);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-accent);
+}
+
+.btn-secondary {
+    background-color: var(--color-neutral);
+    color: var(--color-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-dark);
+}
+
+/* Welcome Section */
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.welcome-section h1 {
+    color: var(--color-dark);
+    font-size: 2rem;
+}
+
+/* Targets Section */
+.targets-section {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid rgba(191, 135, 86, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-header h2 {
+    color: var(--color-dark);
+}
+
+.targets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.target-card {
+    background: linear-gradient(135deg, var(--color-light), white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(191, 135, 86, 0.1);
+}
+
+.target-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.target-label {
+    color: var(--color-neutral);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.target-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Nutrition Section */
+.nutrition-section {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(191, 135, 86, 0.1);
+}
+
+.nutrition-section h2 {
+    color: var(--color-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.table-container {
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: var(--color-light);
+    padding: var(--spacing-md);
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-dark);
+    border-bottom: 2px solid var(--color-neutral);
+}
+
+td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid rgba(191, 135, 86, 0.1);
+}
+
+td a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+td a:hover {
+    color: var(--color-accent);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.pagination span {
+    color: var(--color-neutral);
+}

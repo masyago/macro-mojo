@@ -1,0 +1,252 @@
+:root {
+    --color-gray: #B9B4BF;
+    --color-light: #F2F2F2;
+    --color-primary: #718C56;
+    --color-secondary: #A6BF8E;
+    --color-accent: #F2BB9B;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-light);
+    color: #333;
+    line-height: 1.6;
+}
+
+.container, main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* Navigation and Header */
+.top-nav, .logout-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-lg);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Buttons */
+.btn, 
+button[type="submit"],
+.add-new-meal-button,
+.back-to-dashboard-button {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover, 
+button[type="submit"]:hover,
+.add-new-meal-button:hover,
+.back-to-dashboard-button:hover {
+    background-color: var(--color-secondary);
+}
+
+.btn-secondary {
+    background-color: var(--color-gray);
+}
+
+.btn-secondary:hover {
+    background-color: #a09ba5;
+}
+
+/* Tables */
+table, .meals-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+    background: white;
+}
+
+th {
+    background-color: var(--color-light);
+    padding: var(--spacing-md);
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-secondary);
+}
+
+td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-light);
+}
+
+td a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+td a:hover {
+    color: var(--color-secondary);
+}
+
+/* Section Headers */
+.dashboard-header,
+.meals-of-the-day-header,
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+h1, h2 {
+    color: var(--color-primary);
+    font-size: 2rem;
+}
+
+/* Targets Section */
+.targets-section,
+.nutrition-section,
+.form-container,
+.login-container {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.targets-changes-table {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Form Styles */
+.form-container, 
+.login-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group, 
+.login-form label,
+div > label {
+    display: block;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-gray);
+    font-weight: 500;
+}
+
+input[type="text"], 
+input[type="number"], 
+input[type="password"],
+.login-form input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-gray);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(113, 140, 86, 0.1);
+}
+
+/* Message Styles */
+.message,
+.warning-text,
+.recommended-text {
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) auto;
+    border-radius: var(--radius-sm);
+    max-width: 600px;
+    text-align: center;
+}
+
+.warning-text {
+    background-color: #FEF2F2;
+    border: 1px solid #EF4444;
+    color: #EF4444;
+    font-weight: bold;
+}
+
+.recommended-text {
+    background-color: #F0FDF4;
+    border: 1px solid #10B981;
+    color: #10B981;
+}
+
+.message {
+    background-color: var(--color-accent);
+    color: white;
+}
+
+/* Pagination */
+.pagination, .pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    color: var(--color-gray);
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mb-lg {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Instructions */
+.instructions {
+    font-size: 0.9rem;
+    color: var(--color-gray);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .targets-changes-table,
+    .new-entry,
+    .form-container,
+    .login-container {
+        width: 100%;
+    }
+    
+    .dashboard-header,
+    .meals-of-the-day-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+}
