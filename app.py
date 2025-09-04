@@ -1,5 +1,7 @@
 import secrets
 
+import os
+
 from datetime import date, datetime
 from flask import (
     flash,
@@ -312,6 +314,9 @@ def delete_entry(username, date, nutrition_entry_id):
     return redirect(url_for('day_view', username=username, date=date))  
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5003)
+    if os.environ.get('FLASK_ENV') == 'production':
+        app.run(debug=False)
+    else:
+        app.run(debug=True, port=5003)
 
 
