@@ -95,7 +95,7 @@ class DatabasePersistence:
         # Get all nutrition data, including meals, for specific date
         query = """
                 SELECT nutrition.id AS "nutrition_entry_id",
-                       entered_at AS "Added at",
+                       TO_CHAR(entered_at, 'HH:MI AM') AS "Added at",
                        calories AS "Calories",
                        protein AS "Protein",
                        fat AS "Fat",

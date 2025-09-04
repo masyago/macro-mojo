@@ -19,6 +19,7 @@ from functools import wraps
 from macro_mojo.utils import (
     error_for_date_format,
     error_for_nutrition_entry,
+    error_for_meal_len,
     error_for_targets,
     get_todays_date,
     is_date_valid,
@@ -178,7 +179,9 @@ def add_nutrition_entry(username, date):
     error_nutrition = error_for_nutrition_entry(calories, protein, fat, carbs)
     if error_nutrition:
         errors.append(error_nutrition)
-    # add meal validation if meal is not empty
+    error_meal = error_for_meal_len(meal)
+    if error_meal:
+        errors.append(error_meal)
     
     if errors:
         for error in errors:
@@ -278,9 +281,16 @@ def update_entry(username, date, nutrition_entry_id):
     meal = request.form["meal"]
 
     # Validate data. If input not valid, display error and re-display input values
-    error = error_for_nutrition_entry(calories, protein, fat, carbs)
-    if error:
-        flash(error)
+    errors = []
+    error_nutrition = error_for_nutrition_entry(calories, protein, fat, carbs)
+    if error_nutrition:
+        errors.append(error_nutrition)
+    error_meal = error_for_meal_len(meal)
+    if error_meal:
+        errors.append(error_meal)
+    if errors:
+        for error in errors:
+            flash(error)
         input_nutrition = {'calories': calories,
                               'protein': protein,
                               'fat': fat,
@@ -312,6 +322,12 @@ def delete_entry(username, date, nutrition_entry_id):
     g.storage.delete_nutrition_entry(nutrition_entry_id)
     flash('The entry was deleted!')
     return redirect(url_for('day_view', username=username, date=date))  
+
+@app.route("/<username>/ai_assistant")
+@check_login
+def ai_assistant_targets(username):
+    return "Hello, I am here to help you find your mojo!"
+
 
 if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':

@@ -21,6 +21,12 @@ def error_for_nutrition_entry(calories, protein, fat, carbs):
         
     return None
 
+def error_for_meal_len(name):
+    if len(name) > 100:
+        return "Meal or snack name must be less than 100 characters. Try again!"
+    
+    return None
+
 def error_for_targets(calories, protein, fat, carbs):
     inputs = [calories, protein, fat, carbs]
     
@@ -38,21 +44,6 @@ def error_for_targets(calories, protein, fat, carbs):
         
     return None
 
-def error_for_meal_len(name):
-    if not 2 <= len(name) <= 100:
-        return """
-                Meal or snack name must be between 2 and 100 characters. 
-                Try again!
-                """
-    
-    return None
-
-def check_meal_duplicates(new_meal, existing_meals):
-    for meal in existing_meals:
-        if new_meal == meal:
-            return "Entered meal name already exists. Try another one!"
-    return None
-
 def is_date_valid(d):
     try: 
         datetime.strptime(d, '%Y-%m-%d')
@@ -67,11 +58,6 @@ def is_date_valid(d):
         return True
     except ValueError:
         return False
-    
-def is_meal_id_valid(id, available_meal_id):
-    if id in available_meal_id:
-        return True
-    return False
 
 # Check date format in user input
 def error_for_date_format(date): 

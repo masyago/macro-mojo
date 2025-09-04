@@ -8,8 +8,11 @@
 
     <div class="form-container">
         <h1>Update Targets</h1>
-        <p class="form-subtitle">Updating targets for {{ username }}</p>
-        
+        <!-- <p class="form-subtitle">Updating targets for {{ username }}</p> -->
+        <div class="form-actions">
+            <button type="submit">I need help setting up targets!</button>
+            <a href="{{ url_for('ai_assistant_targets', username=username) }}" >Use AI to find my Mojo</a>
+        </div>
         <form action="{{ url_for('update_targets', username=username) }}" method="post">
             <div class="form-group">
                 <label for="calories">Calories</label>
