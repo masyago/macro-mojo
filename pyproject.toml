@@ -6,11 +6,18 @@ authors = [
     {name = "Natasha Masyago",email = "natalia.masyago@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4.0"
 dependencies = [
     "flask (>=3.1.1,<4.0.0)",
     "psycopg2 (>=2.9.10,<3.0.0)",
-    "bcrypt (>=4.3.0,<5.0.0)"
+    "bcrypt (>=4.3.0,<5.0.0)",
+    "langchain (>=0.3.27,<0.4.0)",
+    "langchain-openai (>=0.3.32,<0.4.0)",
+    "langchain-community (>=0.3.29,<0.4.0)",
+    "wikipedia (>=1.4.0,<2.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "duckduckgo-search (>=8.1.1,<9.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)"
 ]
 
 

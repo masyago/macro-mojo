@@ -26,6 +26,11 @@ from macro_mojo.utils import (
     is_nutrition_id_valid,
 )
 
+from macro_mojo.ai_agent import (
+    get_ai_response,
+    get_ai_welcome_message
+)
+
 # from werkzeug.exceptions import NotFound
 from macro_mojo.db_persistence import DatabasePersistence
 
@@ -325,9 +330,35 @@ def delete_entry(username, date, nutrition_entry_id):
 
 @app.route("/<username>/ai_assistant")
 @check_login
-def ai_assistant_targets(username):
-    return "Hello, I am here to help you find your mojo!"
+def chat_with_ai_assistant(username):
+    if 'history' not in session:
+        welcome_message = get_ai_welcome_message()
+        session['history'] = []
+        session['history'].append({'sender': 'ai_agent', 'text': welcome_message})
+    return render_template('ai_help.html', history=session['history'],
+                           username=username)
 
+@app.route("/<username>/ai_assistant", methods=["POST"])
+@check_login
+def get_response_from_ai_assistant(username):
+    user_message = request.form['message']
+    session['history'].append({'sender': username, 'text': user_message})
+
+    ai_message_dict = get_ai_response(user_message, session['history'])
+    ai_message = f"""
+                 Based on information you provided, suggested targets are:
+                 - Calories: {ai_message_dict['calories']}
+                 - Protein: {ai_message_dict['protein']} g
+                 - Fat: {ai_message_dict['fat']} g
+                 - Carbohydrates: {ai_message_dict['carbs']} g
+
+                 Explanation:
+                 {ai_message_dict['explanation']}
+                """
+    session['history'].append({'sender': 'ai_agent', 'text': ai_message})
+
+    session.modified = True 
+    return redirect(url_for('chat_with_ai_assistant', username=username))
 
 if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':

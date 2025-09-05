@@ -11,7 +11,7 @@
         <!-- <p class="form-subtitle">Updating targets for {{ username }}</p> -->
         <div class="form-actions">
             <button type="submit">I need help setting up targets!</button>
-            <a href="{{ url_for('ai_assistant_targets', username=username) }}" >Use AI to find my Mojo</a>
+            <a href="{{ url_for('get_response_from_ai_assistant', username=username) }}" >Use AI to find my Mojo</a>
         </div>
         <form action="{{ url_for('update_targets', username=username) }}" method="post">
             <div class="form-group">
