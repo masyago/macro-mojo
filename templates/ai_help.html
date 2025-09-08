@@ -27,6 +27,11 @@
       ></textarea>
       <button type="submit" class="chat-submit">Send</button>
     </form>
+    <div>
+    <form action="{{ url_for('clear_chat_history', username=username) }}" method="post"> 
+        <p>To clear the chat and start over click here: </p> <button name="clear_chat_history">Start Over</button>
+    </form>
+    </div>
   </div>
 
   <div class="button-group" style="margin-top: var(--spacing-lg);">

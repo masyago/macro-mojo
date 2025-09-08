@@ -19,6 +19,8 @@ class NutritionResponse(BaseModel):
     source: list[str]
     tools_used: list[str]
 
+REQUIRED_INFO = ['age', 'sex', 'weight', 'height', 'activity level', 'goals']
+
 def get_ai_response(query, session_history):
     llm = ChatOpenAI(model="gpt-4.1-mini")
     parser = PydanticOutputParser(pydantic_object=NutritionResponse)
@@ -34,6 +36,22 @@ def get_ai_response(query, session_history):
                 many calories and macronutrients to consume to reach their weight 
                 goals. If physical activity levels are not provided, assume 
                 sendetary daily activity.
+
+                # If user message is not relevant to calories and macronutrients
+                # intake recommendations, respond politely but firmly that you
+                # can help only with calories and macronutrients target
+                # intake recommendations and request for relevant information.
+
+                # If user didn't provide details about themselves that are 
+                # suffiecient for providing calorie and macronutrients intake
+                # per day, respond that you need additional information to 
+                # provide the recommendation and ask for specific information.
+                
+                # When user's information is not sufficient to provide target
+                # recommendation, set calories and macronutrients targets to zero.
+                
+                # If user provides sufficient information about themself to 
+                # provide nutrition recommnedation, 
                 Wrap the output in this format\n{format_instructions}
                 """),
                 ("placeholder", "{chat_history}"),

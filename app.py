@@ -331,7 +331,7 @@ def delete_entry(username, date, nutrition_entry_id):
 @app.route("/<username>/ai_assistant")
 @check_login
 def chat_with_ai_assistant(username):
-    if 'history' not in session:
+    if 'history' not in session or not session['history']:
         welcome_message = get_ai_welcome_message()
         session['history'] = []
         session['history'].append({'sender': 'ai_agent', 'text': welcome_message})
@@ -358,6 +358,12 @@ def get_response_from_ai_assistant(username):
     session['history'].append({'sender': 'ai_agent', 'text': ai_message})
 
     session.modified = True 
+    return redirect(url_for('chat_with_ai_assistant', username=username))
+
+@app.route("/<username>/ai_assistant/clear_history", methods=["POST"])
+@check_login
+def clear_chat_history(username):
+    session['history'].clear()
     return redirect(url_for('chat_with_ai_assistant', username=username))
 
 if __name__ == "__main__":
