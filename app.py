@@ -345,8 +345,9 @@ def get_response_from_ai_assistant(username):
     session['history'].append({'sender': username, 'text': user_message})
 
     ai_message_dict = get_ai_response(user_message, session['history'])
+
     ai_message = f"""
-                 Based on information you provided, suggested targets are:
+                 Based on information you provided, suggested targets are:\
                  - Calories: {ai_message_dict['calories']}
                  - Protein: {ai_message_dict['protein']} g
                  - Fat: {ai_message_dict['fat']} g
