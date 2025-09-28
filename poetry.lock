@@ -444,6 +444,20 @@ files = [
 ]
 
 [[package]]
+name = "dotenv"
+version = "0.9.9"
+description = "Deprecated package"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "dotenv-0.9.9-py2.py3-none-any.whl", hash = "sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9"},
+]
+
+[package.dependencies]
+python-dotenv = "*"
+
+[[package]]
 name = "duckduckgo-search"
 version = "8.1.1"
 description = "Search for words, documents, images, news, maps and text translation using the DuckDuckGo.com search engine."
@@ -2674,4 +2688,4 @@ cffi = ["cffi (>=1.17)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "345b199661e48c3dfbe34127f5a1c92cdfd81e7eac1f627bd631c72d7ad76ccb"
+content-hash = "62035b0e24821c00889e4476fdb30e859df91bd9dbbdcdb05336358e55110f3b"

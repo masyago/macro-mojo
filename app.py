@@ -343,19 +343,19 @@ def chat_with_ai_assistant(username):
 def get_response_from_ai_assistant(username):
     user_message = request.form['message']
     session['history'].append({'sender': username, 'text': user_message})
+    ai_message = get_ai_response(user_input=user_message)
+    # ai_message_dict = get_ai_response(user_message, session['history'])
+    # ai_message = f"{ai_message_dict}"
+    # ai_message = f"""
+    #              Based on information you provided, suggested targets are:\
+    #              - Calories: {ai_message_dict['calories']}
+    #              - Protein: {ai_message_dict['protein']} g
+    #              - Fat: {ai_message_dict['fat']} g
+    #              - Carbohydrates: {ai_message_dict['carbs']} g
 
-    ai_message_dict = get_ai_response(user_message, session['history'])
-
-    ai_message = f"""
-                 Based on information you provided, suggested targets are:\
-                 - Calories: {ai_message_dict['calories']}
-                 - Protein: {ai_message_dict['protein']} g
-                 - Fat: {ai_message_dict['fat']} g
-                 - Carbohydrates: {ai_message_dict['carbs']} g
-
-                 Explanation:
-                 {ai_message_dict['explanation']}
-                """
+    #              Explanation:
+    #              {ai_message_dict['explanation']}
+                # """
     session['history'].append({'sender': 'ai_agent', 'text': ai_message})
 
     session.modified = True 
