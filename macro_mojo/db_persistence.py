@@ -4,6 +4,7 @@ import bcrypt
 import logging
 import psycopg2
 from psycopg2.extras import DictCursor
+import os
 
 LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 # Configure logging messages. Log INFO messages and higher severity messages
@@ -11,9 +12,13 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 class DatabasePersistence:
+    def __init__(self, dsn=None):
+        # `dsn` is 'data source name'
+        self._dsn = dsn or os.environ.get("DATABASE_URL") or None
+
     @contextmanager
     def _database_connect(self):
-        connection = psycopg2.connect(dbname='macro_mojo')
+        connection = psycopg2.connect(self._dns) if self._dsn else psycopg2.connect()
         try:
             with connection:
                 yield connection

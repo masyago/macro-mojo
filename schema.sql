@@ -26,7 +26,3 @@ CREATE TABLE nutrition (
     carbs integer NOT NULL,
     meal text
 );
-
-
-
-

@@ -22,7 +22,7 @@ from macro_mojo.utils import (
     error_for_meal_len,
     error_for_targets,
     get_todays_date,
-    is_date_valid,
+    is_date_in_url_valid,
     is_nutrition_id_valid,
 )
 
@@ -73,7 +73,8 @@ def _paginate(data, page_str):
 
 @app.before_request
 def load_db():
-    g.storage = DatabasePersistence()
+    dsn = app.config.get("DATABASE_URL") or os.environ.get("DATABASE_URL")
+    g.storage = DatabasePersistence(dsn=dsn)
 
 @app.route("/favicon.ico/")
 def favicon():
@@ -133,7 +134,7 @@ def user_overview(username):
 @app.route("/<username>/<date>")
 @check_login
 def day_view(username, date):
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     
     daily_total = g.storage.daily_total_nutrition(username, date)
@@ -157,7 +158,7 @@ def day_view(username, date):
 @app.route("/<username>/<date>/add_new") 
 @check_login
 def new_nutrition_entry(username, date):
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     return render_template('add_nutrition_entry.html', username=username, 
                            date=date,
@@ -166,7 +167,7 @@ def new_nutrition_entry(username, date):
 @app.route("/<username>/<date>/add_new", methods=["POST"])
 @check_login
 def add_nutrition_entry(username, date):
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     # Extract entered data
     entry_date = request.form["entry_date"]
@@ -252,7 +253,7 @@ def update_targets(username):
 @check_login
 def edit_entry(username, date, nutrition_entry_id):
     # Validate date part of URL
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     
     # Validate nutrition id part of URL 
@@ -270,7 +271,7 @@ def edit_entry(username, date, nutrition_entry_id):
 @check_login
 def update_entry(username, date, nutrition_entry_id):
     # Validate date part of URL
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     
     # Validate nutrition id part of URL 
@@ -316,7 +317,7 @@ def update_entry(username, date, nutrition_entry_id):
 @check_login
 def delete_entry(username, date, nutrition_entry_id):
     # Validate date part of URL
-    if not is_date_valid(date):
+    if not is_date_in_url_valid(date):
         return render_template('bad_url.html', username=username)
     
     # Validate nutrition id part of URL 

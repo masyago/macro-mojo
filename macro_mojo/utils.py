@@ -4,6 +4,7 @@ def error_for_nutrition_entry(calories, protein, fat, carbs):
     inputs = [calories, protein, fat, carbs]
     
     try:
+        # Check that inputs are numbers
         for input in inputs:
             int(input)
     except:
@@ -13,11 +14,12 @@ def error_for_nutrition_entry(calories, protein, fat, carbs):
               """
     
     for input in inputs:
-        if int(input) not in range(10001):
+        # Check that inputs are integers between 0 and 10,000, inclusive
+        if '.' in str(input) or input != int(input) or int(input) not in range(10001):
             return """
                     Inputs for calories, protein, fats, and carbohydrates
                     must be integers between 0 and 10,000. Try again!
-                """
+                   """
         
     return None
 
@@ -34,32 +36,29 @@ def error_for_targets(calories, protein, fat, carbs):
         for input in inputs:
             int(input)
     except:
-        return """Inputs for calories, protein, fats, and carbohydrates must 
-                  be non-negative integers."""
+        return """Inputs for calories, protein, fats, and carbohydrates must be non-negative integers."""
     
     for input in inputs:
-        if int(input) not in range(10001):
-            return """Targets for calories, protein, fats, and carbohydrates
-                      must be integers between 0 and 10,000. Try again!"""
+        if '.' in str(input) or input != int(input) or int(input) not in range(10001):
+            return """Targets for calories, protein, fats, and carbohydrates must be integers between 0 and 10,000. Try again!"""
         
     return None
 
-def is_date_valid(d):
-    try: 
-        datetime.strptime(d, '%Y-%m-%d')
-        return True
-    except ValueError:
-        return False
-    
 # Check date format in URL
-def is_date_valid(d): 
+def is_date_in_url_valid(d): 
     try: 
+        """Confirm that the input string can be converted to a datetime object
+        """
         datetime.strptime(d, '%Y-%m-%d')
         return True
     except ValueError:
         return False
 
 # Check date format in user input
+"""
+Note: Even though browser display date is in 'MM/DD/YYYY', 
+normalized format is 'YYYY-MM-DD'
+"""
 def error_for_date_format(date): 
     try: 
         datetime.strptime(date, '%Y-%m-%d')
