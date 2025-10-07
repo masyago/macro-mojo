@@ -18,7 +18,11 @@ class DatabasePersistence:
 
     @contextmanager
     def _database_connect(self):
-        connection = psycopg2.connect(self._dns) if self._dsn else psycopg2.connect()
+        """
+        Open a PostgreSQL connection.
+        Uses explicit DSN if provided; otherwise falls back to environment/default.
+        """
+        connection = psycopg2.connect(self._dsn) if self._dsn else psycopg2.connect()
         try:
             with connection:
                 yield connection
