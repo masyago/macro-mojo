@@ -2,42 +2,44 @@
 
 {% block content %}
 <div class="container">
-    <nav class="top-nav">
-        <div class="logo">Macro Mojo</div>
-    </nav>
+    <div class="content-wrapper narrow">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+        </nav>
 
-    <div class="form-container">
-        <h1>Update Targets</h1>
-        <!-- <p class="form-subtitle">Updating targets for {{ username }}</p> -->
-        <div class="form-actions">
-            <button type="submit">I need help setting up targets!</button>
-            <a href="{{ url_for('get_response_from_ai_assistant', username=username) }}" >Use AI to find my Mojo</a>
-        </div>
-        <form action="{{ url_for('update_targets', username=username) }}" method="post">
-            <div class="form-group">
-                <label for="calories">Calories</label>
-                <input type="number" name="calories" id="calories" value="{{ user_targets.calorie_target}}" required/>
-            </div>
-
-            <div class="form-group">
-                <label for="protein">Protein (g)</label>
-                <input type="number" name="protein" id="protein" value="{{ user_targets.protein_target }}" required/>
-            </div>
-                        <div class="form-group">
-                <label for="fat">Fat (g)</label>
-                <input type="number" name="fat" id="fat" value="{{ user_targets.fat_target }}" required/>
-            </div>
-
-            <div class="form-group">
-                <label for="carbs">Carbs (g)</label>
-                <input type="number" name="carbs" id="carbs" value="{{ user_targets.carb_target }}" required/>
-            </div>
-
+        <div class="form-container">
+            <h1>Update Targets</h1>
+            <!-- <p class="form-subtitle">Updating targets for {{ username }}</p> -->
             <div class="form-actions">
-                <button type="submit" class="button primary">Update Targets</button>
-                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+                <button type="submit">I need help setting up targets!</button>
+                <a href="{{ url_for('get_response_from_ai_assistant', username=username) }}" >Use AI to find my Mojo</a>
             </div>
-        </form>
+            <form action="{{ url_for('update_targets', username=username) }}" method="post">
+                <div class="form-group">
+                    <label for="calories">Calories</label>
+                    <input type="number" name="calories" id="calories" value="{{ user_targets.calorie_target}}" required/>
+                </div>
+
+                <div class="form-group">
+                    <label for="protein">Protein (g)</label>
+                    <input type="number" name="protein" id="protein" value="{{ user_targets.protein_target }}" required/>
+                </div>
+                            <div class="form-group">
+                    <label for="fat">Fat (g)</label>
+                    <input type="number" name="fat" id="fat" value="{{ user_targets.fat_target }}" required/>
+                </div>
+
+                <div class="form-group">
+                    <label for="carbs">Carbs (g)</label>
+                    <input type="number" name="carbs" id="carbs" value="{{ user_targets.carb_target }}" required/>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button primary">Update Targets</button>
+                    <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

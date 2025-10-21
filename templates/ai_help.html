@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<div class="container">
+    <nav class="top-nav">
+        <div class="logo">Macro Mojo</div>
+    </nav>
   <div class="chat-container">
     <div class="chat-messages" id="chatMessages">
       {% for message in history %}  <!-- Remove reverse filter -->
@@ -59,4 +63,6 @@
       observer.observe(messages, { childList: true, subtree: true });
     }
   </script>
+
+</div>
 {% endblock %}

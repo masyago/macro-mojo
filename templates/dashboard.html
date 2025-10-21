@@ -2,15 +2,16 @@
 
 {% block content %}
 <div class="container">
-    <nav class="top-nav">
-        <div class="logo">Macro Mojo</div>
-        <div class="nav-actions">
-            <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-                <button type="submit" class="button subtle">Log Out</button>
-            </form>
-        </div>
-    </nav>
-
+    <div class="content-wrapper">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+            <div class="nav-actions">
+                <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+                    <button type="submit" class="button subtle">Log Out</button>
+                </form>
+            </div>
+        </nav>
+    
         <div class="dashboard">
             <div class="content-container">
                 <header class="welcome-section">
@@ -89,5 +90,6 @@
             </section>
             </div>
         </div>
-    </div>
+    </div>    
+</div>
 {% endblock %}

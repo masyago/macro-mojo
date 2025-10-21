@@ -1,7 +1,7 @@
 from pathlib import Path
 
 resolved = Path(__file__).resolve()
-print(resolved) 
+print(resolved)
 """
 Prints and absolute path of the current file:
 /Users/martian_elk/Projects/macro_mojo/tests/temp.py"""
@@ -29,6 +29,6 @@ path_current_file = parent_of_current_file / "temp.py"
 print(path_current_file)
 """/Users/martian_elk/Projects/macro_mojo/tests/temp.py"""
 
-path_current_file_no_spaces = parent_of_current_file/"temp.py"
+path_current_file_no_spaces = parent_of_current_file / "temp.py"
 print(path_current_file_no_spaces)
 """/Users/martian_elk/Projects/macro_mojo/tests/temp.py"""

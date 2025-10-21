@@ -1,4 +1,4 @@
-/* Gobal styling */
+/* Global styling */
 :root {
     --color-gray: #B9B4BF;
     --color-light: #F2F2F2;
@@ -30,6 +30,14 @@ body {
     flex-direction: column;
 }
 
+/* Logo styling */
+.logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -38,6 +46,21 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 80vh;
+}
+
+/* Content wrapper */
+.content-wrapper {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Narrow variant for form pages */
+.content-wrapper.narrow {
+    max-width: 400px;
 }
 
 .dashboard .content-container,
@@ -59,7 +82,8 @@ body {
     justify-content: flex-start;
     align-items: center;
     padding: var(--spacing-md) 0;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    width: 100%;
 }
 
 .nav-actions {
@@ -83,6 +107,20 @@ body {
 
 .header-actions .button {
     min-width: 160px;
+}
+
+.dashboard-nav {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-md);
+}
+
+.nav-actions {
+    margin-left: auto;
 }
 
 /* Dashboard specific button styles */
@@ -165,7 +203,6 @@ body {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     width: 100%;
-    max-width: 400px;
 }
 
 .container .form-container {

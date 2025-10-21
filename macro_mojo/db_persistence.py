@@ -1,3 +1,5 @@
+"""test Black  formatting"""
+
 from contextlib import contextmanager
 
 import bcrypt
@@ -6,23 +8,33 @@ import psycopg2
 from psycopg2.extras import DictCursor
 import os
 
-LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 # Configure logging messages. Log INFO messages and higher severity messages
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
+
 class DatabasePersistence:
-    def __init__(self, dsn=None):
+    def __init__(self, dsn: str | None = None):
         # `dsn` is 'data source name'
-        self._dsn = dsn or os.environ.get("DATABASE_URL") or None
+        self._dsn = dsn
 
     @contextmanager
     def _database_connect(self):
         """
         Open a PostgreSQL connection.
-        Uses explicit DSN if provided; otherwise falls back to environment/default.
+        Uses explicit DSN if provided; otherwise falls back to environment or
+        default.
         """
-        connection = psycopg2.connect(self._dsn) if self._dsn else psycopg2.connect()
+        logger.info(
+            "Connecting to database using %s",
+            "DSN" if self._dsn else "default dbname=macro_mojo",
+        )
+        connection = (
+            psycopg2.connect(self._dsn)
+            if self._dsn
+            else psycopg2.connect(dbname="macro_mojo")
+        )
         try:
             with connection:
                 yield connection
@@ -34,31 +46,32 @@ class DatabasePersistence:
         logger.info("Executing query: %s with username %s", query, username)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (username, ))
+                cursor.execute(query, (username,))
                 user_row = cursor.fetchone()
 
         if user_row:
-            stored_password = user_row['hashed_pwd'].encode('utf-8')
-            is_password_valid = bcrypt.checkpw(password.encode('utf-8'), 
-                                               stored_password)
+            stored_password = user_row["hashed_pwd"].encode("utf-8")
+            is_password_valid = bcrypt.checkpw(
+                password.encode("utf-8"), stored_password
+            )
             if is_password_valid:
                 return True
-            
+
         return False
-    
+
     def _find_user_id_by_username(self, username):
         query = "SELECT id FROM users WHERE username = %s"
         logger.info("Executing query: %s with username %s", query, username)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (username, ))
+                cursor.execute(query, (username,))
                 user_row = cursor.fetchone()
 
         if not user_row:
             return None
-        user_id = user_row['id']
+        user_id = user_row["id"]
         return user_id
-    
+
     # Calculate sum of each nutrition parameter for specific date
     def daily_total_nutrition(self, username, date):
         user_id = self._find_user_id_by_username(username)
@@ -68,15 +81,19 @@ class DatabasePersistence:
                 FROM nutrition
                 WHERE user_id = %s AND date = %s
                 """
-        logger.info("Executing query: %s with user_d %s and date %s", query,
-                    user_id, date)
+        logger.info(
+            "Executing query: %s with user_d %s and date %s",
+            query,
+            user_id,
+            date,
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id, date))
                 daily_total = cursor.fetchone()
-        
+
         return daily_total
-    
+
     # Calculate leftover nutrition by subtracting sum from target
     def get_nutrition_left(self, username, date):
         user_id = self._find_user_id_by_username(username)
@@ -91,14 +108,18 @@ class DatabasePersistence:
                 WHERE user_id = %s AND date = %s
                 GROUP BY targets.id 
                 """
-        logger.info("Executing query: %s with user_id %s and date %s",
-                    query, user_id, date)
+        logger.info(
+            "Executing query: %s with user_id %s and date %s",
+            query,
+            user_id,
+            date,
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id, date))
                 nutrition_left = cursor.fetchone()
         return nutrition_left
-    
+
     def get_daily_nutrition(self, username, date):
         user_id = self._find_user_id_by_username(username)
         # Get all nutrition data, including meals, for specific date
@@ -114,17 +135,21 @@ class DatabasePersistence:
                 WHERE nutrition.user_id = %s AND "date" = %s
                 ORDER BY entered_at DESC
                 """
-    
-        logger.info("Executing query: %s with user_id %s and date %s",
-                    query, user_id, date)
+
+        logger.info(
+            "Executing query: %s with user_id %s and date %s",
+            query,
+            user_id,
+            date,
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id, date))
                 results = cursor.fetchall()
-        
+
         daily_nutrition = [dict(result) for result in results]
         return daily_nutrition
-    
+
     def get_user_targets(self, username):
         user_id = self._find_user_id_by_username(username)
         query = """SELECT calorie_target, protein_target,
@@ -135,13 +160,18 @@ class DatabasePersistence:
         logger.info("Executing query: %s with user_id %s", query, user_id)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (user_id, ))
+                cursor.execute(query, (user_id,))
                 user_targets = cursor.fetchone()
         return user_targets
-    
-    def update_user_targets(self, username,
-                            new_calorie_target, new_protein_target,
-                            new_fat_target, new_carb_target):
+
+    def update_user_targets(
+        self,
+        username,
+        new_calorie_target,
+        new_protein_target,
+        new_fat_target,
+        new_carb_target,
+    ):
         user_id = self._find_user_id_by_username(username)
         query = """
                 UPDATE targets 
@@ -154,20 +184,34 @@ class DatabasePersistence:
                             WHERE users.id = %s
                             )
                 """
-        logger.info("""Executing query: %s with
+        logger.info(
+            """Executing query: %s with
                     %s as calorie_target,
                     %s as protein_target,
                     %s as fat_target,
                     %s as carb_target,
-                    %s as user_id""" ,
-                    query, new_calorie_target, new_protein_target,
-                    new_fat_target, new_carb_target, user_id)
-        
+                    %s as user_id""",
+            query,
+            new_calorie_target,
+            new_protein_target,
+            new_fat_target,
+            new_carb_target,
+            user_id,
+        )
+
         with self._database_connect() as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, (new_calorie_target, new_protein_target,
-                               new_fat_target, new_carb_target, user_id))
-                
+                cursor.execute(
+                    query,
+                    (
+                        new_calorie_target,
+                        new_protein_target,
+                        new_fat_target,
+                        new_carb_target,
+                        user_id,
+                    ),
+                )
+
     # Sum nutrition parameters for each day
     def get_user_all_nutrition(self, username):
         user_id = self._find_user_id_by_username(username)
@@ -182,92 +226,115 @@ class DatabasePersistence:
                 GROUP BY date
                 ORDER BY date DESC
                 """
-        
+
         logger.info("Executing query: %s with user_id %s", query, user_id)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (user_id, ))
+                cursor.execute(query, (user_id,))
                 results = cursor.fetchall()
 
         user_all_nutrition = [dict(result) for result in results]
         return user_all_nutrition
-    
-    def add_nutrition_entry(self, date, username,
-                            calories, protein, fat, carbs, meal):
+
+    def add_nutrition_entry(
+        self, date, username, calories, protein, fat, carbs, meal
+    ):
         user_id = self._find_user_id_by_username(username)
         query_add_nutrition = """
             INSERT INTO nutrition 
                         (user_id, meal, date, calories, protein, fat, carbs)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
-        logger.info("""Executing query: %s with
+        logger.info(
+            """Executing query: %s with
                         user_id, meal, date, calories, protein, fat, carbs
-                        %s, %s, %s, %s, %s, %s, %s""", 
-                        query_add_nutrition, user_id, meal,
-                        date, calories, protein, fat, carbs)
+                        %s, %s, %s, %s, %s, %s, %s""",
+            query_add_nutrition,
+            user_id,
+            meal,
+            date,
+            calories,
+            protein,
+            fat,
+            carbs,
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query_add_nutrition, (user_id, meal,
-                        date, calories, protein, fat, carbs))
+                cursor.execute(
+                    query_add_nutrition,
+                    (user_id, meal, date, calories, protein, fat, carbs),
+                )
 
     def find_nutrition_entry_by_id(self, nutrition_entry_id):
         query = """
                 SELECT * FROM nutrition
                 WHERE id = %s
                 """
-        logger.info("Executing query: %s with id %s", query, nutrition_entry_id)
+        logger.info(
+            "Executing query: %s with id %s", query, nutrition_entry_id
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (nutrition_entry_id, ))
+                cursor.execute(query, (nutrition_entry_id,))
                 nutrition_entry = cursor.fetchone()
 
         return nutrition_entry
 
-    def update_nutrition_entry(self, nutrition_entry_id, calories,
-                               protein, fat, carbs, meal):
-        # meal_id = self.find_meal_id(meal)
+    def update_nutrition_entry(
+        self, nutrition_entry_id, calories, protein, fat, carbs, meal
+    ):
         query = """
                 UPDATE nutrition
                 SET calories = %s, protein = %s, fat = %s,
                     carbs = %s, meal = %s
                 WHERE id = %s     
                 """
-        logger.info("""
+        logger.info(
+            """
                     Executing query: %s with 
                     calories, protein, fat, carbs, meal, id
-                    %s, %s, %s, %s, %s, %s""", 
-                    query, calories, protein, fat, carbs, meal,
-                    nutrition_entry_id)
+                    %s, %s, %s, %s, %s, %s""",
+            query,
+            calories,
+            protein,
+            fat,
+            carbs,
+            meal,
+            nutrition_entry_id,
+        )
         with self._database_connect() as connection:
-                with connection.cursor(cursor_factory=DictCursor) as cursor:
-                    cursor.execute(query, (calories, protein, fat, carbs,
-                                           meal, nutrition_entry_id))
-    
+            with connection.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(
+                    query,
+                    (calories, protein, fat, carbs, meal, nutrition_entry_id),
+                )
+
     def delete_nutrition_entry(self, nutrition_entry_id):
         query = """
                 DELETE FROM nutrition
                 WHERE id = %s
                 """
-        logger.info("Executing query: %s with id %s", query,
-                    nutrition_entry_id)
+        logger.info(
+            "Executing query: %s with id %s", query, nutrition_entry_id
+        )
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (nutrition_entry_id, ))
-    
+                cursor.execute(query, (nutrition_entry_id,))
+
     def get_all_nutrition_entries_ids(self, username):
         user_id = self._find_user_id_by_username(username)
-        query = '''
+        query = """
                 SELECT id FROM nutrition
                 WHERE user_id = %s
-                '''
+                """
         logger.info("Executing query: %s with user_id %s", query, user_id)
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (user_id, ))
+                cursor.execute(query, (user_id,))
                 results = cursor.fetchall()
-        
+
         nutrition_results = [dict(result) for result in results]
         all_nutrition_ids = []
         for item in nutrition_results:
-            all_nutrition_ids.append(item['id'])
+            all_nutrition_ids.append(item["id"])
         return all_nutrition_ids
