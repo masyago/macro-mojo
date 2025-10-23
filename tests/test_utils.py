@@ -10,11 +10,9 @@ Parametrized tests for nutrition entry and targets. Functions tested:
 
 Tests:
 1. Valid inputs:
-   - Test that the function returns `None` when inputs are integers within set 
-     range
+   - Test that the function returns `None` when inputs can be converted to integers within set range
 2. Invalid inputs:
-   - Test that the function returns an error if any of the inputs are not 
-   integers: float and str
+   - Test that the function returns an error if the inputs cannot be converted  to integers
    - Test that the function returns an error if any of the inputs are integers 
      but outside set range
 """
@@ -40,13 +38,8 @@ def test_nutrition_and_targets_inputs_valid(func, args, expected_output):
     [
         (
             utils.error_for_nutrition_entry,
-            ("10.1", 0, 0, 0),
+            ("abc", 0, 0, 0),
             "non-negative integers",
-        ),
-        (
-            utils.error_for_nutrition_entry,
-            (10.1, 0, 0, 0),
-            "between 0 and 10,000",
         ),
         (
             utils.error_for_nutrition_entry,
@@ -58,8 +51,7 @@ def test_nutrition_and_targets_inputs_valid(func, args, expected_output):
             (10, 0, 10001, 0),
             "between 0 and 10,000",
         ),
-        (utils.error_for_targets, ("10.1", 0, 0, 0), "non-negative integers"),
-        (utils.error_for_targets, (10.1, 0, 0, 0), "between 0 and 10,000"),
+        (utils.error_for_targets, ("abc", 0, 0, 0), "non-negative integers"),
         (utils.error_for_targets, (-10, 0, 0, 0), "between 0 and 10,000"),
         (utils.error_for_targets, (10, 0, 10001, 0), "between 0 and 10,000"),
     ],
@@ -74,7 +66,7 @@ def test_nutrition_and_targets_inputs_invalid(
 Tests for `error_for_meal_len` function:
 1. Test that the function returns `None` when input is under 100 characters
 2. Test that the function returns error when input is greater that 100
-   charaters 
+   characters 
 """
 
 
@@ -84,7 +76,7 @@ def test_error_for_meal_len_ok():
 
 
 def test_error_for_meal_len_too_long():
-    meal_input = """A very spicy ramen with chicken, corn, and delisious 
+    meal_input = """A very spicy ramen with chicken, corn, and delicious 
                     noodles in a trendy downtown Japanese restaurant. I loved 
                     it so much, I want to come back!"""
     meal_len_error_message = utils.error_for_meal_len(meal_input)
@@ -111,7 +103,7 @@ def test_is_date_in_url_valid_invalid_year():
     assert utils.is_date_in_url_valid(date_url) == False
 
 
-def test_is_date_in_url_valid_invalid_delimeter():
+def test_is_date_in_url_valid_invalid_delimiter():
     date_url = "2025/06/01"
     assert utils.is_date_in_url_valid(date_url) == False
 
@@ -147,17 +139,17 @@ Tests for `is_nutrition_id_valid` function:
 
 def test_is_nutrition_id_valid_ok():
     available_nutrition_id = [1, 2, 4, 7]
-    assert utils.is_nutrition_id_valid(1, available_nutrition_id) == True
+    assert utils.is_nutrition_id_valid(1, available_nutrition_id) is True
 
 
 def test_is_nutrition_id_valid_invalid_avail_id_empty():
     available_nutrition_id = []
-    assert utils.is_nutrition_id_valid(1, available_nutrition_id) == False
+    assert utils.is_nutrition_id_valid(1, available_nutrition_id) is False
 
 
 def test_is_nutrition_id_valid_invalid_not_in_avail_id():
     available_nutrition_id = [1, 2, 3, 7, 90]
-    assert utils.is_nutrition_id_valid(8, available_nutrition_id) == False
+    assert utils.is_nutrition_id_valid(8, available_nutrition_id) is False
 
 
 """

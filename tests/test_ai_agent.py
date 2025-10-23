@@ -62,5 +62,5 @@ Test welcome message
 def test_get_ai_welcome_message():
     message = ai_agent.get_ai_welcome_message()
     assert "Hello" in message
-    assert "calorie and macronutrients" in message
-    assert "weight goals" in message
+    assert "Weight" in message
+    assert "Activity level" in message

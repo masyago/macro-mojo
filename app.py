@@ -3,6 +3,7 @@ import secrets
 import os
 
 from datetime import date
+
 from flask import (
     flash,
     Flask,
@@ -15,6 +16,7 @@ from flask import (
     url_for,
 )
 from functools import wraps
+import markdown2
 
 from macro_mojo.utils import (
     error_for_date_format,
@@ -28,11 +30,15 @@ from macro_mojo.utils import (
 
 from macro_mojo.ai_agent import get_ai_response, get_ai_welcome_message
 
-# from werkzeug.exceptions import NotFound
 from macro_mojo.db_persistence import DatabasePersistence
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+
+
+@app.template_filter("markdown")
+def markdown_filter(text):
+    return markdown2.markdown(text, extras=["break-on-newline"])
 
 
 def user_logged_in():
@@ -44,7 +50,7 @@ def check_login(func):
     def decorated_function(*args, **kwargs):
         if not user_logged_in():
             flash("You must be logged in to complete the action.")
-            return redirect(url_for("dispay_login_page", next=request.url))
+            return redirect(url_for("display_login_page", next=request.url))
 
         return func(*args, **kwargs)
 
@@ -88,7 +94,7 @@ def index():
 
 
 @app.route("/login/")
-def dispay_login_page():
+def display_login_page():
     return render_template("login.html")
 
 
@@ -307,7 +313,7 @@ def edit_entry(username, date, nutrition_entry_id):
     if not is_nutrition_id_valid(nutrition_entry_id, available_nutrition_ids):
         return render_template("bad_url.html", username=username)
 
-    # Get nutrition data to diplay in `edit_entry` view
+    # Get nutrition data to display in `edit_entry` view
     nutrition_data = g.storage.find_nutrition_entry_by_id(nutrition_entry_id)
     return render_template(
         "edit_entry.html",
@@ -412,18 +418,6 @@ def get_response_from_ai_assistant(username):
     user_message = request.form["message"]
     session["history"].append({"sender": username, "text": user_message})
     ai_message = get_ai_response(user_input=user_message)
-    # ai_message_dict = get_ai_response(user_message, session['history'])
-    # ai_message = f"{ai_message_dict}"
-    # ai_message = f"""
-    #              Based on information you provided, suggested targets are:\
-    #              - Calories: {ai_message_dict['calories']}
-    #              - Protein: {ai_message_dict['protein']} g
-    #              - Fat: {ai_message_dict['fat']} g
-    #              - Carbohydrates: {ai_message_dict['carbs']} g
-
-    #              Explanation:
-    #              {ai_message_dict['explanation']}
-    # """
     session["history"].append({"sender": "ai_agent", "text": ai_message})
 
     session.modified = True

@@ -63,8 +63,7 @@ body {
     max-width: 400px;
 }
 
-.dashboard .content-container,
-.day-view .content-container {
+.dashboard .content-container {
     max-width: 800px;
     margin: 0 auto;
     width: 100%;
@@ -557,14 +556,30 @@ input[type="date"]:focus {
     margin: 0 auto;
 }
 
-/* Wider content container for day view */
+/* Day view content layout */
 .day-view .content-container {
-    max-width: 1000px;
+    max-width: 1200px;
+    padding: var(--spacing-lg);
+    margin: 0 auto;
 }
+
+.day-view .content-wrapper {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.day-view .top-nav {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-md) 0;
+}
+
 
 /* Summary Card */
 .summary-card {
-    background: var(--color-light);
+    background: white;
     padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-lg);
@@ -575,6 +590,28 @@ input[type="date"]:focus {
     color: #333;
     margin-bottom: var(--spacing-md);
     font-weight: 600;
+}
+
+.summary-card table {
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.summary-card thead th {
+    background-color: var(--color-primary);
+    color: white;
+    padding: var(--spacing-md);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.summary-card tbody td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-light);
+}
+
+.summary-card tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* Tables */
@@ -599,6 +636,7 @@ input[type="date"]:focus {
 
 /* Dashboard table styling */
 .nutrition-section h2 {
+    margin-top: 2rem;
     margin-bottom: var(--spacing-md);
 }
 
@@ -617,7 +655,60 @@ table {
     text-align: center;
 }
 
-/* Specific styling for targets table */
+/* Empty day */
+.empty-day .container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.empty-day .content-wrapper {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.empty-day .top-nav {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--spacing-md);
+}
+
+.empty-day .content-container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Targets */
+.targets .container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.targets .content-wrapper {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.targets .top-nav {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--spacing-md);
+}
+
+.targets .content-container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+/* Targets table */
 .targets-view table {
     max-width: 520px;
     margin: 0 auto;
@@ -641,6 +732,37 @@ thead th {
 tbody td {
     padding: var(--spacing-md);
     border-bottom: 1px solid var(--color-light);
+}
+
+/* AI help button */
+.ai-help-container {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ai-help-text {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+    min-width: 200px;
+    margin: auto;
+    text-align: center;
+}
+
+.ai-help-container .button.primary {
+    min-height: 42px;
+    height: auto;
+    padding: 0.75rem 1rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+    min-width: 150px;
 }
 
 /* Section Headers */
@@ -760,20 +882,6 @@ a.button.secondary {
     box-shadow: none;
 }
 
-.btn:hover, 
-button[type="submit"]:hover,
-.add-new-meal-button:hover,
-.back-to-dashboard-button:hover {
-    background-color: var(--color-secondary);
-}
-
-.btn-secondary {
-    background-color: var(--color-gray);
-}
-
-.btn-secondary:hover {
-    background-color: #a09ba5;
-}
 
 /* Message Styles */
 .message {
@@ -794,7 +902,7 @@ button[type="submit"]:hover,
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     padding: var(--spacing-lg);
-    margin: var(--spacing-lg) auto;
+    margin: var(--spacing-sm) auto;
     width: 100%;
     max-width: 800px;
     min-height: 500px;
@@ -807,36 +915,60 @@ button[type="submit"]:hover,
     flex-grow: 1;
     overflow-y: auto;
     display: flex;
-    flex-direction: column;  /* Remove column-reverse */
+    flex-direction: column;
     gap: var(--spacing-md);
     padding-right: var(--spacing-sm);
     min-height: 0;
-    scroll-behavior: smooth;  /* Add smooth scrolling */
+    scroll-behavior: smooth; 
+    height: 500px;
+    max-height: 70vh;
 }
 
+/* Chat message styling */
+/* Chat Message Base Styling */
 .chat-message {
-    max-width: 85%;
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    line-height: 1.6;
-    animation: messageAppear 0.3s ease-out;
-}
-
-.chat-message.ai {
-    background: var(--color-light);
-    color: #333;
-    margin-right: auto;
-    border-bottom-left-radius: 4px;
-    box-shadow: var(--shadow-sm);
+    max-width: 80%;
+    padding: 1rem;
+    border-radius: 1rem;
+    position: relative;
+    font-family: var(--font-primary);
+    line-height: 1.4;
+    margin-bottom: var(--spacing-md);
 }
 
 .chat-message.user {
-    background: #E5E5E5;  /* Darker gray for user messages */
-    color: #333;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
-    box-shadow: var(--shadow-sm);
+    align-self: flex-end;
+    background-color: var(--color-primary);
+    color: white;
+    border-bottom-right-radius: 0.25rem;
 }
+
+.chat-message.ai {
+    align-self: flex-start;
+    background-color: #f0f0f0;
+    color: var(--color-text);
+    border-bottom-left-radius: 0.25rem;
+    width: fit-content;
+}
+
+/* Ensure consistent styling for all content inside AI messages */
+.chat-message.ai > p:first-child,
+.chat-message.ai > *:first-child {
+    margin-top: 0;
+}
+
+.chat-message.ai > p:last-child,
+.chat-message.ai > *:last-child {
+    margin-bottom: 0;
+}
+
+.chat-message.ai p,
+.chat-message.ai ul,
+.chat-message.ai ol {
+    margin: 0.5rem 0;
+    font-family: var(--font-primary);
+}
+
 
 .chat-input-container {
     display: flex;
@@ -856,7 +988,7 @@ button[type="submit"]:hover,
     font-size: 1rem;
     transition: all 0.2s ease;
     background: white;
-    min-height: 80px; /* Increased height */
+    min-height: 80px;
     line-height: 1.5;
     resize: none;
     width: 100%;
@@ -892,28 +1024,6 @@ button[type="submit"]:hover,
 .chat-submit:active {
     transform: translateY(0);
 }
-
-.typing-indicator {
-    display: inline-flex;
-    gap: 4px;
-    padding: var(--spacing-sm) var(--spacing-md);
-    align-items: center;
-    background: var(--color-light);
-    border-radius: var(--radius-md);
-    margin: var(--spacing-sm) 0;
-}
-
-.typing-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    opacity: 0.7;
-    animation: typingBounce 1s infinite ease-in-out;
-}
-
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes messageAppear {
     from {

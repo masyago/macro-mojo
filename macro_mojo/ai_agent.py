@@ -13,8 +13,12 @@ load_dotenv()
 
 nutrition_template = """You are good at providing estimates for target daily
 intakes for calories and macronutrients (protein, fats, carbohydrates) based on
-information your client (user) provided. Your answers are short and don't
-include calculations, only include result of calculations.
+information your client (user) provided. Your answers must be:
+1. Short and concise
+2. Focus only on the final recommendations
+3. Use bullet points for clarity
+4. Bold the key numbers
+5. Provide only high-level explanations. Avoid detailed explanations.
 
 Previous conversation history:
 {chat_history}
@@ -60,7 +64,7 @@ prompt_infos = [
     },
 ]
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+llm = ChatOpenAI(model="gpt-4", temperature=0)
 memory = ConversationBufferMemory(
     memory_key="chat_history", input_key="input", return_messages=False
 )
@@ -145,13 +149,11 @@ def get_ai_response(user_input):
 
 
 def get_ai_welcome_message():
-    return """
-            Hello, I am here to help you find your mojo!
-            Tell me about yourself and your goals and I'll provide
-            recommendation for the calorie and macronutrients you should eat
-            per day.
-            Minimum information I need: your weight, your height, gender, age,
-            your weight goals.
-            Additional information that will be helpful: how much do you
-            exercise per week? what do you do for the exercise?
-            """
+    return """ Hello, I am here to help you find your macro mojo!
+
+To get started, please provide:
+- Your sex (male/female)
+- Weight
+- Height
+- Age
+- Activity level"""

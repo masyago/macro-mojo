@@ -1,12 +1,9 @@
-"""test Black  formatting"""
-
 from contextlib import contextmanager
 
 import bcrypt
 import logging
 import psycopg2
 from psycopg2.extras import DictCursor
-import os
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 # Configure logging messages. Log INFO messages and higher severity messages

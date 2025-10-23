@@ -2,62 +2,56 @@
 
 {% block content %}
 <div class="container">
-    <nav class="top-nav">
-        <h1 class="logo">Macro Mojo</h1>
-    </nav>
+    <div class="content-wrapper narrow">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+        </nav>
 
-    <div class="form-container center">
-        <h1>Edit Entry</h1>
-        <p class="form-subtitle">Editing entry from {{ date }}</p>
-        
-        <form action="{{ url_for('update_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
-            <div class="form-group">
-                <label for="calories">Calories</label>
-                <input type="number" id="calories" name="calories" value="{{ nutrition_data.calories }}" required />
-            </div>
+        <div class="form-container center">
+            <h1>Edit Entry</h1>
+            <p class="form-subtitle">Editing entry from {{ date }}</p>
+            
+            <form action="{{ url_for('update_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
+                <div class="form-group">
+                    <label for="calories">Calories</label>
+                    <input type="number" id="calories" name="calories" value="{{ nutrition_data.calories }}" required />
+                </div>
 
-            <div class="form-group">
-                <label for="protein">Protein (g)</label>
-                <input type="number" id="protein" name="protein" value="{{ nutrition_data.protein }}" required />
-            </div>
+                <div class="form-group">
+                    <label for="protein">Protein (g)</label>
+                    <input type="number" id="protein" name="protein" value="{{ nutrition_data.protein }}" required />
+                </div>
 
-            <div class="form-group">
-                <label for="fat">Fat (g)</label>
-                <input type="number" id="fat" name="fat" value="{{ nutrition_data.fat }}" required />
-            </div>
+                <div class="form-group">
+                    <label for="fat">Fat (g)</label>
+                    <input type="number" id="fat" name="fat" value="{{ nutrition_data.fat }}" required />
+                </div>
 
-            <div class="form-group">
-                <label for="carbs">Carbohydrates (g)</label>
-                <input type="number" id="carbs" name="carbs" value="{{ nutrition_data.carbs }}" required />
-            </div>
+                <div class="form-group">
+                    <label for="carbs">Carbohydrates (g)</label>
+                    <input type="number" id="carbs" name="carbs" value="{{ nutrition_data.carbs }}" required />
+                </div>
 
-            <div class="form-group">
-                <label for="meal">Meal or snack</label>
-                <input type="text" id="meal" name="meal" value="{{ nutrition_data.meal }}" maxlength="100" />
-                    <!-- <select type="text" name="meal" required>
-                        <option value="">Select one</option>
-                        {% for meal in user_meals %} 
-                            <option value="{{ meal.name }}" {% if nutrition_data.get('meal') == meal.name %}selected{% endif %}>
-                                {{ meal.name }}
-                            </option>
-                        {% endfor %}
-                    </select> -->
+                <div class="form-group">
+                    <label for="meal">Meal or snack</label>
+                    <input type="text" id="meal" name="meal" value="{{ nutrition_data.meal }}" maxlength="100" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button primary">Save Changes</button>
+                </div>
+            </form>
+
+            <div class="danger-zone">
+                <h2>Danger Zone</h2>
+                <form action="{{ url_for('delete_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
+                    <button type="submit" class="button danger">Delete Entry</button>
+                </form>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="button primary">Save Changes</button>
+                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
             </div>
-        </form>
-
-        <div class="danger-zone">
-            <h2>Danger Zone</h2>
-            <form action="{{ url_for('delete_entry', username=username, date=date, nutrition_entry_id=nutrition_entry_id) }}" method="post">
-                <button type="submit" class="button danger">Delete Entry</button>
-            </form>
-        </div>
-
-        <div class="form-actions">
-            <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
         </div>
     </div>
 </div>

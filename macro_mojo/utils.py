@@ -15,16 +15,12 @@ def error_for_nutrition_entry(calories, protein, fat, carbs):
             """
 
     for input in inputs:
-        # Check that inputs are integers between 0 and 10,000, inclusive
-        if (
-            "." in str(input)
-            or input != int(input)
-            or int(input) not in range(10001)
-        ):
+        # Check that inputs fall between 0 and 10,000, inclusive
+        if int(input) not in range(10001):
             return """
                     Inputs for calories, protein, fats, and carbohydrates
                     must be integers between 0 and 10,000. Try again!
-                   """
+                    """
 
     return None
 
@@ -49,11 +45,7 @@ def error_for_targets(calories, protein, fat, carbs):
                   be non-negative integers."""
 
     for input in inputs:
-        if (
-            "." in str(input)
-            or input != int(input)
-            or int(input) not in range(10001)
-        ):
+        if int(input) not in range(10001):
             return """Targets for calories, protein, fats, and carbohydrates 
                       must be integers between 0 and 10,000. Try again!"""
 

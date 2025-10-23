@@ -1,2 +1,18 @@
+# macOS system files
 .DS_Store
-venv
+
+# Virtual environment and cache
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Environment variables
+.env
+
+# IDE settings
+.vscode/

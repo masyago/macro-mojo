@@ -2,102 +2,103 @@
 
 {% block content %}
 <div class="container day-view">
-    <nav class="top-nav">
-        <h1 class="logo">Macro Mojo</h1>
-    </nav>
+    <div class="content-wrapper">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+        </nav>
 
-    <div class="content-container">
-        <h1>{{ date }}</h1>
-        
-        <div class="summary-card">
-            <h2>Daily Summary</h2>
-            <div class="summary-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Calories</th>
-                            <th>Protein (g)</th>
-                            <th>Fat (g)</th>
-                            <th>Carbs (g)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Consumed</td>
-                            <td>{{ daily_total.calories }}</td>
-                            <td>{{ daily_total.protein }}</td>
-                            <td>{{ daily_total.fat }}</td>
-                            <td>{{ daily_total.carbs }}</td>
-                        </tr>
-                        <tr>
-                            <td>Remaining</td>
-                            <td>{{ nutrition_left["Calories left"] }}</td>
-                            <td>{{ nutrition_left["Protein left"] }}</td>
-                            <td>{{ nutrition_left["Fat left"] }}</td>
-                            <td>{{ nutrition_left["Carbs left"] }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="meals-section">
-            <div class="section-header">
-                <h2>Meal Entries</h2>
-                <div class="form-actions">
-                    <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}" class="button primary">Add New Entry</a>
+        <div class="content-container">
+            <h1>{{ date }}</h1>
+            
+            <div class="summary-card">
+                <h2>Summary</h2>
+                <div class="summary-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Calories</th>
+                                <th>Protein (g)</th>
+                                <th>Fat (g)</th>
+                                <th>Carbs (g)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Consumed</td>
+                                <td>{{ daily_total.calories }}</td>
+                                <td>{{ daily_total.protein }}</td>
+                                <td>{{ daily_total.fat }}</td>
+                                <td>{{ daily_total.carbs }}</td>
+                            </tr>
+                            <tr>
+                                <td>Remaining</td>
+                                <td>{{ nutrition_left["Calories left"] }}</td>
+                                <td>{{ nutrition_left["Protein left"] }}</td>
+                                <td>{{ nutrition_left["Fat left"] }}</td>
+                                <td>{{ nutrition_left["Carbs left"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            
-            <p class="helper-text">Click on the time to edit or delete an entry</p>
-            
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Calories</th>
-                            <th>Protein (g)</th>
-                            <th>Fat (g)</th>
-                            <th>Carbs (g)</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for nutrition_row in daily_nutrition_entries_on_page %}
-                        <tr>
-                            <td>
-                                <a href="{{ url_for('edit_entry', username=username, date=date, nutrition_entry_id=nutrition_row.nutrition_entry_id ) }}" class="edit-link">
-                                    {{ nutrition_row["Added at"] }}
-                                </a>
-                            </td>
-                            <td>{{ nutrition_row["Calories"] }}</td>
-                            <td>{{ nutrition_row["Protein"] }}</td>
-                            <td>{{ nutrition_row["Fat"] }}</td>
-                            <td>{{ nutrition_row["Carbohydrates"] }}</td>
-                            <td>{{ nutrition_row["Meals or snacks"] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pagination">
-                {% if page > 1 %}
-                    <a href="{{ url_for('day_view', username=username, date=date, page=page-1) }}" class="button secondary">Previous</a>
-                {% endif %}
+            <div class="meals-section">
+                <div class="section-header">
+                    <h2>Meal Entries</h2>
+                    <div class="form-actions">
+                        <a href="{{ url_for('new_nutrition_entry', username=username, date=date) }}" class="button primary">Add New Entry</a>
+                    </div>
+                </div>
                 
-                <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+                <p class="helper-text">Click on the time to edit or delete an entry</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Calories</th>
+                                <th>Protein (g)</th>
+                                <th>Fat (g)</th>
+                                <th>Carbs (g)</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for nutrition_row in daily_nutrition_entries_on_page %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('edit_entry', username=username, date=date, nutrition_entry_id=nutrition_row.nutrition_entry_id ) }}" class="edit-link">
+                                        {{ nutrition_row["Added at"] }}
+                                    </a>
+                                </td>
+                                <td>{{ nutrition_row["Calories"] }}</td>
+                                <td>{{ nutrition_row["Protein"] }}</td>
+                                <td>{{ nutrition_row["Fat"] }}</td>
+                                <td>{{ nutrition_row["Carbohydrates"] }}</td>
+                                <td>{{ nutrition_row["Meals or snacks"] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-                {% if page < total_pages %}
-                    <a href="{{ url_for('day_view', username=username, date=date, page=page+1) }}" class="button secondary">Next</a>
-                {% endif %}
-            </div>
+                <div class="pagination">
+                    {% if page > 1 %}
+                        <a href="{{ url_for('day_view', username=username, date=date, page=page-1) }}" class="button secondary">Previous</a>
+                    {% endif %}
+                    
+                    <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
 
-            <div class="form-actions">
-                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('day_view', username=username, date=date, page=page+1) }}" class="button secondary">Next</a>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+                </div>
             </div>
-        </div>
     </div>
 </div>
 {% endblock %}

@@ -2,30 +2,33 @@
 
 {% block content %}
 <div class="container">
-    <div class="welcome-container">
-        <div class="logo">Macro Mojo</div>
-        
-        <div class="form-container">
-            <h1>Login</h1>
+    <div class="content-wrapper narrow">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+        </nav>
             
-            <form class="login-form" action="{{ url_for('process_login') }}" method="post">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="pwd">Password</label>
-                    <input type="password" id="pwd" name="pwd" required />
-                </div>
-
-                <input type="hidden" name="next" value="{{ request.args.get('next', '' )}}" />
+            <div class="form-container">
+                <h1>Login</h1>
                 
-                <div class="form-actions">
-                    <button type="submit" class="button primary">Login</button>
-                    <a href="{{ url_for('index') }}" class="button primary">Back</a>
-                </div>
-            </form>
+                <form class="login-form" action="{{ url_for('process_login') }}" method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pwd">Password</label>
+                        <input type="password" id="pwd" name="pwd" required />
+                    </div>
+
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '' )}}" />
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="button primary">Login</button>
+                        <a href="{{ url_for('index') }}" class="button primary">Back</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

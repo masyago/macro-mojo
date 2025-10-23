@@ -1,42 +1,44 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="container">
-    <nav class="top-nav">
-        <h1 class="logo">Macro Mojo</h1>
-    </nav>
+<div class="container targets">
+    <div class="content-wrapper">
+        <nav class="top-nav">
+            <span class="logo">Macro Mojo</span>
+        </nav>
 
-    <div class="content-container">
-        <div class="section-header">
-            <h1>Daily Targets</h1>
-            <div class="form-actions">
-                <a href="{{ url_for('edit_targets', username=username) }}" class="button primary">Edit Targets</a>
+        <div class="content-container">
+            <div class="section-header">
+                <h1>Daily Targets</h1>
+                <div class="form-actions">
+                    <a href="{{ url_for('edit_targets', username=username) }}" class="button primary">Edit Targets</a>
+                </div>
             </div>
-        </div>
 
-        <div class="table-container targets-view">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Calories</th>
-                        <th>Protein (g)</th>
-                        <th>Fat (g)</th>
-                        <th>Carbs (g)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ user_targets.calorie_target }}</td>
-                        <td>{{ user_targets.protein_target }}</td>
-                        <td>{{ user_targets.fat_target }}</td>
-                        <td>{{ user_targets.carb_target }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="table-container targets-view">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Calories</th>
+                            <th>Protein (g)</th>
+                            <th>Fat (g)</th>
+                            <th>Carbs (g)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ user_targets.calorie_target }}</td>
+                            <td>{{ user_targets.protein_target }}</td>
+                            <td>{{ user_targets.fat_target }}</td>
+                            <td>{{ user_targets.carb_target }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="form-actions">
-            <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+            <div class="form-actions">
+                <a href="{{ url_for('user_overview', username=username) }}" class="button primary">Back to Dashboard</a>
+            </div>
         </div>
     </div>
 </div>

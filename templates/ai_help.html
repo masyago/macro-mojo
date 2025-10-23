@@ -1,68 +1,75 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+{% import 'markdown_processing.html' as markdown %}
 <div class="container">
-    <nav class="top-nav">
-        <div class="logo">Macro Mojo</div>
-    </nav>
-  <div class="chat-container">
-    <div class="chat-messages" id="chatMessages">
-      {% for message in history %}  <!-- Remove reverse filter -->
-          {% if message.sender == "ai_agent" %}
-              <div class="chat-message ai">
-                  {{ message.text }}
-              </div>
-          {% elif message.sender == username %}
-              <div class="chat-message user">
-                  {{ message.text }}
-              </div>
-          {% endif %}
-      {% endfor %}
+    <div class="content-wrapper">
+        <nav class="top-nav">
+            <div class="logo">Macro Mojo</div>
+        </nav>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          {% for message in history %}
+              {% if message.sender == "ai_agent" %}
+                  <div class="chat-message ai">
+                      {{ message.text|markdown|safe }}
+                  </div>
+              {% elif message.sender == username %}
+                  <div class="chat-message user">
+                      {{ message.text }}
+                  </div>
+              {% endif %}
+          {% endfor %}
+        </div>
+        
+        <form method="post" class="chat-input-container" id="chatForm">
+          <textarea 
+            name="message" 
+            required 
+            class="chat-input"
+            placeholder="Type your message here..."
+            rows="3"
+            onkeydown="handleKeyPress(event)"
+          ></textarea>
+          <button type="submit" class="chat-submit">Send</button>
+        </form>
+        <div>
+        <form action="{{ url_for('clear_chat_history', username=username) }}" method="post"> 
+            <button name="clear_chat_history" class="button subtle">Clear Chat History</button>
+        </form>
+        </div>
+      </div>
+
+      <div class="button-group" style="margin-top: var(--spacing-md);">
+        <a href="{{ url_for('user_overview', username=username) }}" class="button secondary">Back to Dashboard</a>
+      </div>
+
+      <script>
+        function scrollToBottom() {
+          const messagesContainer = document.getElementById('chatMessages');
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            document.getElementById('chatForm').submit();
+          }
+        }
+
+        // Scroll to bottom on page load and after any content changes
+        window.onload = scrollToBottom;
+        const messages = document.getElementById('chatMessages');
+        if (messages) {
+          const observer = new MutationObserver(scrollToBottom);
+          observer.observe(messages, { childList: true, subtree: true });
+        }
+
+        // Preserve scroll position after form submission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+    }
+      </script>
     </div>
-    
-    <form method="post" class="chat-input-container" id="chatForm">
-      <textarea 
-        name="message" 
-        required 
-        class="chat-input"
-        placeholder="Type your message here..."
-        rows="3"
-        onkeydown="handleKeyPress(event)"
-      ></textarea>
-      <button type="submit" class="chat-submit">Send</button>
-    </form>
-    <div>
-    <form action="{{ url_for('clear_chat_history', username=username) }}" method="post"> 
-        <p>To clear the chat and start over click here: </p> <button name="clear_chat_history">Start Over</button>
-    </form>
-    </div>
-  </div>
-
-  <div class="button-group" style="margin-top: var(--spacing-lg);">
-    <a href="{{ url_for('user_overview', username=username) }}" class="button secondary">Back to Dashboard</a>
-  </div>
-
-  <script>
-    function scrollToBottom() {
-      const messagesContainer = document.getElementById('chatMessages');
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        document.getElementById('chatForm').submit();
-      }
-    }
-
-    // Scroll to bottom on page load and after any content changes
-    window.onload = scrollToBottom;
-    const messages = document.getElementById('chatMessages');
-    if (messages) {
-      const observer = new MutationObserver(scrollToBottom);
-      observer.observe(messages, { childList: true, subtree: true });
-    }
-  </script>
-
 </div>
 {% endblock %}

@@ -9,10 +9,9 @@
 
         <div class="form-container">
             <h1>Update Targets</h1>
-            <!-- <p class="form-subtitle">Updating targets for {{ username }}</p> -->
-            <div class="form-actions">
-                <button type="submit">I need help setting up targets!</button>
-                <a href="{{ url_for('get_response_from_ai_assistant', username=username) }}" >Use AI to find my Mojo</a>
+            <div class="form-actions ai-help-container">
+                <span class="ai-help-text">I need help setting up targets!</span>
+                <a href="{{ url_for('get_response_from_ai_assistant', username=username) }}" class="button primary">Use AI to find my Mojo</a>
             </div>
             <form action="{{ url_for('update_targets', username=username) }}" method="post">
                 <div class="form-group">
