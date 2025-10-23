@@ -9,7 +9,8 @@ AI-powered assistant for personalized nutrition targets.
 
 * **Backend Framework:** Python, Flask, psycopg2
 * **Database:** PostgreSQL
-* **AI Integration:** OpenAI API
+* **AI Integration:** LangChain framework with multi-prompt routing, 
+    conversation memory, ChatOpenAI (GPT-4) 
 * **Frontend:** HTML, CSS, Jinja2 templates, embedded JavaScript
 * **Environment & Dependency Management:** Poetry
 * **Security & Authentication:** Input validation, SQL query sanitation, 
@@ -24,7 +25,7 @@ AI-powered assistant for personalized nutrition targets.
 * Full CRUD functionality for nutrition records
 * SQL queries sanitization and input validation to prevent injection attacks
 * Modular architecture for maintainability and future scalability
-* AI assistant for personalized nutrition recommendations
+* AI assistant for personalized nutrition recommendations. 
 
 ## Installation & Setup
 
