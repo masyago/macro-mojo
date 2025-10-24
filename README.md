@@ -3,7 +3,7 @@
 Macro Mojo is a full-stack nutrition tracking web application that helps users 
 set calorie and macronutrient goals, log meals, and monitor daily progress. It
 includes authentication, database persistence, data validation, and an 
-AI-powered assistant for personalized nutrition targets.
+AI-powered assistant for personalized nutrition targets advice.
 
 ## Tech Stack
 
@@ -40,7 +40,7 @@ AI-powered assistant for personalized nutrition targets.
 
 1. **Clone and set up environment**
     ```
-    git clone [REPOSITORY_URL]
+    git clone https://github.com/masyago/macro-mojo
     cd macro_mojo
     poetry install
     ```
