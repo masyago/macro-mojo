@@ -143,12 +143,12 @@ chain = MultiPromptChain(
 )
 
 
-def get_ai_response(user_input):
+def get_ai_response(user_input: str) -> str:
     result = chain.invoke({"input": user_input})
     return result["text"]
 
 
-def get_ai_welcome_message():
+def get_ai_welcome_message() -> str:
     return """ Hello, I am here to help you find your macro mojo!
 
 To get started, please provide:

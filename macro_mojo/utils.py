@@ -1,7 +1,10 @@
 from datetime import date, datetime
+from typing import Optional, List
 
 
-def error_for_nutrition_entry(calories, protein, fat, carbs):
+def error_for_nutrition_entry(
+    calories: str, protein: str, fat: str, carbs: str
+) -> Optional[str]:
     inputs = [calories, protein, fat, carbs]
 
     try:
@@ -25,7 +28,7 @@ def error_for_nutrition_entry(calories, protein, fat, carbs):
     return None
 
 
-def error_for_meal_len(name):
+def error_for_meal_len(name: str) -> Optional[str]:
     if len(name) > 100:
         return (
             "Meal or snack name must be less than 100 characters. Try again!"
@@ -34,7 +37,9 @@ def error_for_meal_len(name):
     return None
 
 
-def error_for_targets(calories, protein, fat, carbs):
+def error_for_targets(
+    calories: str, protein: str, fat: str, carbs: str
+) -> Optional[str]:
     inputs = [calories, protein, fat, carbs]
 
     try:
@@ -53,7 +58,7 @@ def error_for_targets(calories, protein, fat, carbs):
 
 
 # Check date format in URL
-def is_date_in_url_valid(d):
+def is_date_in_url_valid(d: str) -> bool:
     try:
         """Confirm that the input string can be converted to a datetime
         object"""
@@ -70,18 +75,18 @@ normalized format is 'YYYY-MM-DD'
 """
 
 
-def error_for_date_format(date):
+def error_for_date_format(date_str: str) -> Optional[str]:
     try:
-        datetime.strptime(date, "%Y-%m-%d")
+        datetime.strptime(date_str, "%Y-%m-%d")
     except ValueError:
         return "Date must be in 'MM/DD/YYYY' format. Try again!"
 
 
-def is_nutrition_id_valid(id, available_nutrition_id):
+def is_nutrition_id_valid(id: int, available_nutrition_id: List[int]) -> bool:
     if id in available_nutrition_id:
         return True
     return False
 
 
-def get_todays_date():
+def get_todays_date() -> date:
     return date.today()

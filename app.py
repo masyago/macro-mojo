@@ -11,12 +11,14 @@ from flask import (
     make_response,
     redirect,
     render_template,
+    Response,
     request,
     session,
     url_for,
 )
 from functools import wraps
 import markdown2
+from typing import Callable, TypeVar, Any, Tuple, List, Dict, Union, Optional
 
 from macro_mojo.utils import (
     error_for_date_format,
@@ -32,32 +34,36 @@ from macro_mojo.ai_agent import get_ai_response, get_ai_welcome_message
 
 from macro_mojo.db_persistence import DatabasePersistence
 
+F = TypeVar("F", bound=Callable[..., Any])
+
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
 
 @app.template_filter("markdown")
-def markdown_filter(text):
+def markdown_filter(text: str) -> str:
     return markdown2.markdown(text, extras=["break-on-newline"])
 
 
-def user_logged_in():
+def user_logged_in() -> bool:
     return "username" in session
 
 
-def check_login(func):
+def check_login(func: F) -> F:
     @wraps(func)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: Any, **kwargs: Any) -> Any:
         if not user_logged_in():
             flash("You must be logged in to complete the action.")
             return redirect(url_for("display_login_page", next=request.url))
 
         return func(*args, **kwargs)
 
-    return decorated_function
+    return decorated_function  # type: ignore[return-value]
 
 
-def _paginate(data, page_str):
+def _paginate(
+    data: List[Dict[str, Any]], page_str: Optional[str]
+) -> Union[Tuple[int, int, int, int], bool]:
     if page_str is None:
         page_str = "1"
 
@@ -78,28 +84,28 @@ def _paginate(data, page_str):
 
 
 @app.before_request
-def load_db():
+def load_db() -> None:
     dsn = app.config.get("DATABASE_URL") or os.environ.get("DATABASE_URL")
     g.storage = DatabasePersistence(dsn=dsn)
 
 
 @app.route("/favicon.ico/")
-def favicon():
+def favicon() -> Response:
     return make_response("", 204)
 
 
 @app.route("/")
-def index():
+def index() -> str:
     return render_template("index.html")
 
 
 @app.route("/login/")
-def display_login_page():
+def display_login_page() -> str:
     return render_template("login.html")
 
 
 @app.route("/login/", methods=["POST"])
-def process_login():
+def process_login() -> Union[Response, Tuple[str, int]]:
     username = request.form["username"]
     password = request.form["pwd"]
     next_url = request.form["next"]
@@ -117,7 +123,7 @@ def process_login():
 
 
 @app.route("/logout", methods=["POST"])
-def logout():
+def logout() -> Response:
     session.clear()
     flash("You have been logged out.")
     return redirect(url_for("index"))
@@ -125,7 +131,7 @@ def logout():
 
 @app.route("/<username>/")
 @check_login
-def user_overview(username):
+def user_overview(username: str) -> str:
     user_targets = g.storage.get_user_targets(username)
     user_nutrition = g.storage.get_user_all_nutrition(username)
     today = date.today()
@@ -151,7 +157,7 @@ def user_overview(username):
 
 @app.route("/<username>/<date>")
 @check_login
-def day_view(username, date):
+def day_view(username: str, date: str) -> str:
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
 
@@ -182,7 +188,7 @@ def day_view(username, date):
 
 @app.route("/<username>/<date>/add_new")
 @check_login
-def new_nutrition_entry(username, date):
+def new_nutrition_entry(username: str, date: str) -> str:
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
     return render_template(
@@ -196,7 +202,7 @@ def new_nutrition_entry(username, date):
 
 @app.route("/<username>/<date>/add_new", methods=["POST"])
 @check_login
-def add_nutrition_entry(username, date):
+def add_nutrition_entry(username: str, date: str) -> Union[str, Response]:
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
     # Extract entered data
@@ -246,7 +252,7 @@ def add_nutrition_entry(username, date):
 
 @app.route("/<username>/targets")
 @check_login
-def display_targets(username):
+def display_targets(username: str) -> str:
     user_targets = g.storage.get_user_targets(username)
     return render_template(
         "targets.html", username=username, user_targets=user_targets
@@ -255,7 +261,7 @@ def display_targets(username):
 
 @app.route("/<username>/targets/edit")
 @check_login
-def edit_targets(username):
+def edit_targets(username: str) -> str:
     user_targets = g.storage.get_user_targets(username)
     return render_template(
         "edit_targets.html", username=username, user_targets=user_targets
@@ -264,7 +270,7 @@ def edit_targets(username):
 
 @app.route("/<username>/targets/edit", methods=["POST"])
 @check_login
-def update_targets(username):
+def update_targets(username: str) -> Union[str, Response]:
     # Extract new target values from HTTP request
     new_calorie_target = request.form["calories"]
     new_protein_target = request.form["protein"]
@@ -303,7 +309,7 @@ def update_targets(username):
 
 @app.route("/<username>/<date>/<int:nutrition_entry_id>/edit")
 @check_login
-def edit_entry(username, date, nutrition_entry_id):
+def edit_entry(username: str, date: str, nutrition_entry_id: int) -> str:
     # Validate date part of URL
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
@@ -328,7 +334,9 @@ def edit_entry(username, date, nutrition_entry_id):
     "/<username>/<date>/<int:nutrition_entry_id>/edit", methods=["POST"]
 )
 @check_login
-def update_entry(username, date, nutrition_entry_id):
+def update_entry(
+    username: str, date: str, nutrition_entry_id: int
+) -> Union[str, Response]:
     # Validate date part of URL
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
@@ -383,7 +391,9 @@ def update_entry(username, date, nutrition_entry_id):
     "/<username>/<date>/<int:nutrition_entry_id>/delete", methods=["POST"]
 )
 @check_login
-def delete_entry(username, date, nutrition_entry_id):
+def delete_entry(
+    username: str, date: str, nutrition_entry_id: int
+) -> Union[str, Response]:
     # Validate date part of URL
     if not is_date_in_url_valid(date):
         return render_template("bad_url.html", username=username)
@@ -400,7 +410,7 @@ def delete_entry(username, date, nutrition_entry_id):
 
 @app.route("/<username>/ai_assistant")
 @check_login
-def chat_with_ai_assistant(username):
+def chat_with_ai_assistant(username: str) -> str:
     if "history" not in session or not session["history"]:
         welcome_message = get_ai_welcome_message()
         session["history"] = []
@@ -414,7 +424,7 @@ def chat_with_ai_assistant(username):
 
 @app.route("/<username>/ai_assistant", methods=["POST"])
 @check_login
-def get_response_from_ai_assistant(username):
+def get_response_from_ai_assistant(username: str) -> Response:
     user_message = request.form["message"]
     session["history"].append({"sender": username, "text": user_message})
     ai_message = get_ai_response(user_input=user_message)
@@ -426,7 +436,7 @@ def get_response_from_ai_assistant(username):
 
 @app.route("/<username>/ai_assistant/clear_history", methods=["POST"])
 @check_login
-def clear_chat_history(username):
+def clear_chat_history(username: str) -> Response:
     session["history"].clear()
     return redirect(url_for("chat_with_ai_assistant", username=username))
 

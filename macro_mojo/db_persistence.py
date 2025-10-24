@@ -4,6 +4,7 @@ import bcrypt
 import logging
 import psycopg2
 from psycopg2.extras import DictCursor
+from typing import List, Optional, Any, Iterator, Dict
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 # Configure logging messages. Log INFO messages and higher severity messages
@@ -12,12 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 class DatabasePersistence:
-    def __init__(self, dsn: str | None = None):
+    def __init__(self, dsn: Optional[str] = None) -> None:
         # `dsn` is 'data source name'
         self._dsn = dsn
 
     @contextmanager
-    def _database_connect(self):
+    def _database_connect(self) -> Iterator[psycopg2.extensions.connection]:
         """
         Open a PostgreSQL connection.
         Uses explicit DSN if provided; otherwise falls back to environment or
@@ -38,7 +39,7 @@ class DatabasePersistence:
         finally:
             connection.close()
 
-    def find_login(self, username, password):
+    def find_login(self, username: str, password: str) -> bool:
         query = "SELECT * FROM users WHERE username = %s"
         logger.info("Executing query: %s with username %s", query, username)
         with self._database_connect() as connection:
@@ -56,7 +57,7 @@ class DatabasePersistence:
 
         return False
 
-    def _find_user_id_by_username(self, username):
+    def _find_user_id_by_username(self, username: str) -> Optional[int]:
         query = "SELECT id FROM users WHERE username = %s"
         logger.info("Executing query: %s with username %s", query, username)
         with self._database_connect() as connection:
@@ -70,7 +71,9 @@ class DatabasePersistence:
         return user_id
 
     # Calculate sum of each nutrition parameter for specific date
-    def daily_total_nutrition(self, username, date):
+    def daily_total_nutrition(
+        self, username: str, date: str
+    ) -> Optional[Dict[str, Any]]:
         user_id = self._find_user_id_by_username(username)
         query = """
                 SELECT SUM(calories) AS calories, SUM(protein) as protein,
@@ -92,7 +95,9 @@ class DatabasePersistence:
         return daily_total
 
     # Calculate leftover nutrition by subtracting sum from target
-    def get_nutrition_left(self, username, date):
+    def get_nutrition_left(
+        self, username: str, date: str
+    ) -> Optional[Dict[str, Any]]:
         user_id = self._find_user_id_by_username(username)
         query = """
                 SELECT (calorie_target - SUM(calories)) AS "Calories left",
@@ -117,7 +122,9 @@ class DatabasePersistence:
                 nutrition_left = cursor.fetchone()
         return nutrition_left
 
-    def get_daily_nutrition(self, username, date):
+    def get_daily_nutrition(
+        self, username: str, date: str
+    ) -> List[Dict[str, Any]]:
         user_id = self._find_user_id_by_username(username)
         # Get all nutrition data, including meals, for specific date
         query = """
@@ -147,7 +154,7 @@ class DatabasePersistence:
         daily_nutrition = [dict(result) for result in results]
         return daily_nutrition
 
-    def get_user_targets(self, username):
+    def get_user_targets(self, username: str) -> Optional[Dict[str, Any]]:
         user_id = self._find_user_id_by_username(username)
         query = """SELECT calorie_target, protein_target,
                           fat_target, carb_target
@@ -163,13 +170,20 @@ class DatabasePersistence:
 
     def update_user_targets(
         self,
-        username,
-        new_calorie_target,
-        new_protein_target,
-        new_fat_target,
-        new_carb_target,
-    ):
+        username: str,
+        new_calorie_target: str,  # New targets come from HTML forms as str
+        new_protein_target: str,
+        new_fat_target: str,
+        new_carb_target: str,
+    ) -> None:
         user_id = self._find_user_id_by_username(username)
+
+        # Convert str to int before database insertion
+        calorie_int = int(new_calorie_target)
+        protein_int = int(new_protein_target)
+        fat_int = int(new_fat_target)
+        carb_int = int(new_carb_target)
+
         query = """
                 UPDATE targets 
                 SET calorie_target = %s,
@@ -201,16 +215,16 @@ class DatabasePersistence:
                 cursor.execute(
                     query,
                     (
-                        new_calorie_target,
-                        new_protein_target,
-                        new_fat_target,
-                        new_carb_target,
+                        calorie_int,
+                        protein_int,
+                        fat_int,
+                        carb_int,
                         user_id,
                     ),
                 )
 
     # Sum nutrition parameters for each day
-    def get_user_all_nutrition(self, username):
+    def get_user_all_nutrition(self, username: str) -> List[Dict[str, Any]]:
         user_id = self._find_user_id_by_username(username)
         query = """SELECT date,
                           SUM(calories) AS calories,
@@ -234,9 +248,23 @@ class DatabasePersistence:
         return user_all_nutrition
 
     def add_nutrition_entry(
-        self, date, username, calories, protein, fat, carbs, meal
-    ):
+        self,
+        date: str,
+        username: str,
+        calories: str,  # Values come from HTML forms as str
+        protein: str,
+        fat: str,
+        carbs: str,
+        meal: str,
+    ) -> None:
         user_id = self._find_user_id_by_username(username)
+
+        # Convert str to int before database insertion
+        calorie_int = int(calories)
+        protein_int = int(protein)
+        fat_int = int(fat)
+        carb_int = int(carbs)
+
         query_add_nutrition = """
             INSERT INTO nutrition 
                         (user_id, meal, date, calories, protein, fat, carbs)
@@ -259,10 +287,20 @@ class DatabasePersistence:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(
                     query_add_nutrition,
-                    (user_id, meal, date, calories, protein, fat, carbs),
+                    (
+                        user_id,
+                        meal,
+                        date,
+                        calorie_int,
+                        protein_int,
+                        fat_int,
+                        carb_int,
+                    ),
                 )
 
-    def find_nutrition_entry_by_id(self, nutrition_entry_id):
+    def find_nutrition_entry_by_id(
+        self, nutrition_entry_id: int
+    ) -> Optional[Dict[str, Any]]:
         query = """
                 SELECT * FROM nutrition
                 WHERE id = %s
@@ -278,8 +316,21 @@ class DatabasePersistence:
         return nutrition_entry
 
     def update_nutrition_entry(
-        self, nutrition_entry_id, calories, protein, fat, carbs, meal
-    ):
+        self,
+        nutrition_entry_id: int,
+        calories: str,
+        protein: str,
+        fat: str,
+        carbs: str,
+        meal: str,
+    ) -> None:
+
+        # Convert str to int before database insertion
+        calorie_int = int(calories)
+        protein_int = int(protein)
+        fat_int = int(fat)
+        carb_int = int(carbs)
+
         query = """
                 UPDATE nutrition
                 SET calories = %s, protein = %s, fat = %s,
@@ -303,10 +354,17 @@ class DatabasePersistence:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(
                     query,
-                    (calories, protein, fat, carbs, meal, nutrition_entry_id),
+                    (
+                        calorie_int,
+                        protein_int,
+                        fat_int,
+                        carb_int,
+                        meal,
+                        nutrition_entry_id,
+                    ),
                 )
 
-    def delete_nutrition_entry(self, nutrition_entry_id):
+    def delete_nutrition_entry(self, nutrition_entry_id: int) -> None:
         query = """
                 DELETE FROM nutrition
                 WHERE id = %s
@@ -318,7 +376,7 @@ class DatabasePersistence:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (nutrition_entry_id,))
 
-    def get_all_nutrition_entries_ids(self, username):
+    def get_all_nutrition_entries_ids(self, username: str) -> List[int]:
         user_id = self._find_user_id_by_username(username)
         query = """
                 SELECT id FROM nutrition
