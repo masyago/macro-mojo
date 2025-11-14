@@ -6,13 +6,20 @@ venv/
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
 
 # Testing
 .pytest_cache/
 .coverage
 
-# Environment variables
+# Environment and password files
 .env
+db/password.txt
 
 # IDE settings
 .vscode/
+
+# Docker files
+db-data/
