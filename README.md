@@ -45,6 +45,7 @@ cd macro-mojo
 ```
 
 2. **Create environment files**
+
    Copy the example files to create your local configuration.
 ```sh
 cp .env.example .env
