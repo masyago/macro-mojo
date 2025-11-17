@@ -26,7 +26,7 @@ services:
     secrets:
       - db-password
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
       - ./db/schema.sql:/docker-entrypoint-initdb.d/10_schema.sql
       - ./db/data.sql:/docker-entrypoint-initdb.d/20_data.sql
     environment:

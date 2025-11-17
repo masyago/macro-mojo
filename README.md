@@ -41,7 +41,7 @@ AI-powered assistant for personalized nutrition targets advice.
 1. **Clone the repository**
 ```sh
 git clone https://github.com/masyago/macro-mojo
-cd macro_mojo
+cd macro-mojo
 ```
 
 2. **Create environment files**
@@ -52,8 +52,12 @@ cp db/password.txt.template db/password.txt
 ```
     
 3. **Update secrets and API keys**
-   * Edit `db/password.txt` to add your password.
-   * Edit `.env` to replace `"your-open-ai-api-key"` with your OpenAI API key. 
+   * Edit `db/password.txt` to add your password. The file must contain ONLY
+     your password for the database, DO NOT add any extra characters.
+   * Edit `.env` to replace `"your-open-ai-api-key"` with your OpenAI API key.
+   * Edit `.env` to update DATABASE_URL value. Replace `"your_strong_password"`
+     part of the URL with your database password. The password must match the
+     one listed in `db/password.txt`.
 
 4. **Build and run the application**
 
