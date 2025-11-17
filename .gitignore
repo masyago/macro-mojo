@@ -1,7 +1,14 @@
 # macOS system files
 .DS_Store
 
-# Virtual environment and cache
+# IDE settings
+.vscode/
+
+# Docker files
+db-data/
+
+# Python artifacts
+.venv/
 venv/
 __pycache__/
 *.py[cod]
@@ -9,17 +16,15 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+dist/
+build/
+
 
 # Testing
 .pytest_cache/
 .coverage
 
-# Environment and password files
+# Environment variables and secrets
 .env
 db/password.txt
 
-# IDE settings
-.vscode/
-
-# Docker files
-db-data/

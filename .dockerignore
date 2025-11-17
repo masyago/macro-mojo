@@ -1,28 +1,40 @@
-**/.DS_Store
-**/__pycache__
-**/.venv
-**/.classpath
-**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
-**/*.*proj.user
-**/*.dbmdl
-**/*.jfm
-**/bin
-**/charts
-**/docker-compose*
-**/compose.y*ml
-**/Dockerfile*
-**/node_modules
-**/npm-debug.log
-**/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
-LICENSE.md
+# Git and Docker config
+.git
+.gitignore
+.dockerignore
+Dockerfile
+compose.yaml
+
+# macOS system files
+.DS_Store
+
+# IDE settings
+.vscode/
+
+# Docker files
+db-data/
+
+# Python artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+dist/
+build/
+
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Environment variables and secrets
+.env
+db/password.txt
+
+# Documentation
 README.md
+LICENSE.md

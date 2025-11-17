@@ -17,6 +17,8 @@ AI-powered assistant for personalized nutrition targets advice.
             protected routes, session-based authentication, bcrypt password
             hashing
 * **Testing:** Pytest
+* **Containerization:** Docker, Docker Compose
+
 
 ## Features
 
@@ -30,53 +32,47 @@ AI-powered assistant for personalized nutrition targets advice.
 ## Installation & Setup
 
 ### Prerequisites
-
-- Poetry: 2.0.0+
-- Python: 3.13.0+
-- PostgreSQL: 17.4+
+- Docker
+- Docker Compose
 - OpenAI API key 
 
 ### Quick Start
 
-1. **Clone and set up environment**
-    ```
-    git clone https://github.com/masyago/macro-mojo
-    cd macro_mojo
-    poetry install
-    ```
+1. **Clone the repository**
+```sh
+git clone https://github.com/masyago/macro-mojo
+cd macro_mojo
+```
+
+2. **Create environment files**
+   Copy the example files to create your local configuration.
+```sh
+cp .env.example .env
+cp db/password.txt.template db/password.txt
+```
     
-2. **Configure environment**
-   Create `.env` file and add OpenAI API key to enable AI assistant:
+3. **Update secrets and API keys**
+   * Edit `db/password.txt` to add your password.
+   * Edit `.env` to replace `"your-open-ai-api-key"` with your OpenAI API key. 
 
-    ```OPENAI_API_KEY = "your-key-here"```
+4. **Build and run the application**
 
-    Note: Python virtual environment is managed by Poetry.
-
-3. **Set up database**
-    * Create a database `macro_mojo`. Run command in terminal:
-
-        ```createdb macro_mojo```
-
-    * Initialize schema and seed data
-
-      ```
-      psql -d macro_mojo < schema.sql
-      psql -d macro_mojo < data.sql
-      ```
-
-4. **Launch application**
-
-    ```poetry run python app.py```
-
-5. **Navigate to `http://localhost:5003/`**
-
-## Development Credentials
-
-```
-Username: `test_user`
-Password: `test_pwd`
+```sh
+docker compose up --build
 ```
 
+5. **Access the application**
+   * Navigate to `http://localhost:5003/`
+   * Development Credentials
+    ```
+    Username: `test_user`
+    Password: `test_pwd`
+    ```
+
+## Stopping the Application
+```sh
+docker compose down
+```
 ## Application Screenshots 
 
 ### Login
@@ -124,9 +120,10 @@ MIT
 
 ## Version History
 
+* **0.1.1:** Added Docker and Docker Compose for containerization
 * **0.1.0:** Initial release
 
-**Last Updated:** October 2025
+**Last Updated:** November 2025
 
 
 
