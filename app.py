@@ -250,6 +250,7 @@ def add_nutrition_entry(username: str, date: str) -> Union[str, Response]:
     return redirect(url_for("day_view", username=username, date=entry_date))
 
 
+# Display targets
 @app.route("/<username>/targets")
 @check_login
 def display_targets(username: str) -> str:
