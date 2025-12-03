@@ -129,6 +129,7 @@ def logout() -> Response:
     return redirect(url_for("index"))
 
 
+# Dashboard
 @app.route("/<username>/")
 @check_login
 def user_overview(username: str) -> str:
