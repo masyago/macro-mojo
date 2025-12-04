@@ -15,6 +15,7 @@ jobs:
 
     env:
       MODE: "dev"
+      OPENAI_API_KEY: ${{ secrets.MM_TEST_OPENAI_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
